@@ -128,7 +128,9 @@ async function handleSubscriptionUpdate(subscription: Stripe.Subscription) {
   });
 
   let subscriptionStatus: "ACTIVE" | "CANCELED" | "PAST_DUE" | "UNPAID" | "NONE" = "NONE";
-  let membershipType: "PREMIUM" | "FREE" = user.membershipType; // デフォルトは現在の値を維持
+  // CORPORATEユーザーの場合は個人向けStripe webhookの対象外
+  let membershipType: "PREMIUM" | "FREE" =
+    user.membershipType === "CORPORATE" ? "FREE" : user.membershipType;
 
   switch (subscription.status) {
     case "active":

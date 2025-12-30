@@ -4,6 +4,7 @@ import { trpc } from "@/lib/trpc";
 import { useSession } from "next-auth/react";
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
+import Image from "next/image";
 
 export function NotificationBell() {
   const { data: session } = useSession();
@@ -152,9 +153,11 @@ export function NotificationBell() {
                     {/* 送信者のアバター */}
                     <div className="flex-shrink-0">
                       {notification.sender?.image ? (
-                        <img
+                        <Image
                           src={notification.sender.image}
                           alt={notification.sender.name || "User"}
+                          width={40}
+                          height={40}
                           className="w-10 h-10 rounded-full object-cover"
                         />
                       ) : (

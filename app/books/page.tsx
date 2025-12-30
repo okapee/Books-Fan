@@ -2,6 +2,7 @@
 
 import { DiscoveryTabs } from "@/components/discovery/DiscoveryTabs";
 import { RecommendationsSidebar } from "@/components/discovery/RecommendationsSidebar";
+import { Suspense } from "react";
 
 export default function BooksPage() {
   return (
@@ -19,7 +20,9 @@ export default function BooksPage() {
         <div className="flex gap-8">
           {/* Discovery Tabs */}
           <div className="flex-1 min-w-0">
-            <DiscoveryTabs />
+            <Suspense fallback={<div>読み込み中...</div>}>
+              <DiscoveryTabs />
+            </Suspense>
           </div>
 
           {/* Recommendations Sidebar */}

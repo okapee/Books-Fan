@@ -12,12 +12,14 @@ interface ReviewListProps {
   bookId: string;
   showWriteButton?: boolean;
   googleBooksId?: string;
+  bookTitle?: string;
 }
 
 export function ReviewList({
   bookId,
   showWriteButton = true,
   googleBooksId,
+  bookTitle,
 }: ReviewListProps) {
   const { data: session } = useSession();
   const [deletingId, setDeletingId] = useState<string | null>(null);
@@ -247,7 +249,7 @@ export function ReviewList({
             reviewId={review.id}
             isPremiumUser={session?.user?.membershipType === "PREMIUM"}
             showGenerateButton={true}
-            bookTitle={review.book?.title || "書籍"}
+            bookTitle={bookTitle || "書籍"}
           />
 
           {/* Like and Comment Actions */}

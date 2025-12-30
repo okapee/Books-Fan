@@ -17,7 +17,7 @@ export default async function MindMapPage() {
   }
 
   // ユーザーのレビューを取得
-  const reviews = await prisma.review.findMany({
+  const reviewsData = await prisma.review.findMany({
     where: {
       userId: session.user.id,
     },
@@ -44,6 +44,19 @@ export default async function MindMapPage() {
       createdAt: "desc",
     },
   });
+
+  // JsonValue型をReviewインターフェースに適合する形に変換
+  const reviews = reviewsData.map((review) => ({
+    ...review,
+    aiSummary: review.aiSummary
+      ? {
+          keyPoints: Array.isArray(review.aiSummary.keyPoints)
+            ? (review.aiSummary.keyPoints as Array<{ point: string }>)
+            : [],
+          summaryText: review.aiSummary.summaryText,
+        }
+      : null,
+  }));
 
   return (
     <div className="min-h-screen bg-gray-50 py-12">

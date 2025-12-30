@@ -428,6 +428,7 @@ export default function BookDetailPage() {
               bookId={dbBookId}
               googleBooksId={bookId}
               showWriteButton={!!session}
+              bookTitle={book.title}
             />
           )}
         </div>

@@ -3,10 +3,10 @@
 import { trpc } from "@/lib/trpc";
 import { useSession } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import Link from "next/link";
 
-export default function CompanyInvitationPage() {
+function InvitationContent() {
   const { data: session, status } = useSession();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -173,5 +173,13 @@ export default function CompanyInvitationPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function CompanyInvitationPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-gray-50 flex items-center justify-center">読み込み中...</div>}>
+      <InvitationContent />
+    </Suspense>
   );
 }

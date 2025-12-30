@@ -74,9 +74,9 @@ export const authOptions: NextAuthOptions = {
         });
 
         if (dbUser) {
-          session.user.email = dbUser.email;
-          session.user.name = dbUser.name;
-          session.user.image = dbUser.image;
+          session.user.email = dbUser.email || session.user.email;
+          session.user.name = dbUser.name || session.user.name;
+          session.user.image = dbUser.image || session.user.image;
           session.user.membershipType = dbUser.membershipType;
           session.user.subscriptionStatus = dbUser.subscriptionStatus;
           session.user.aiUsageCount = dbUser.aiUsageCount;

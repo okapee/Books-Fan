@@ -173,19 +173,20 @@ export default function CompanyReportsPage() {
               <div className="text-4xl font-bold text-primary mb-2">
                 {report.metrics.favorites.count}
               </div>
-              {report.metrics.favorites.change !== undefined && (
-                <div
-                  className={`text-sm ${
-                    report.metrics.favorites.change >= 0
-                      ? "text-green-600"
-                      : "text-red-600"
-                  }`}
-                >
-                  {report.metrics.favorites.change >= 0 ? "▲" : "▼"}{" "}
-                  {Math.abs(report.metrics.favorites.change).toFixed(1)}%{" "}
-                  {reportType === "week" ? "先週比" : "先月比"}
-                </div>
-              )}
+              {"change" in report.metrics.favorites &&
+                report.metrics.favorites.change !== undefined && (
+                  <div
+                    className={`text-sm ${
+                      report.metrics.favorites.change >= 0
+                        ? "text-green-600"
+                        : "text-red-600"
+                    }`}
+                  >
+                    {report.metrics.favorites.change >= 0 ? "▲" : "▼"}{" "}
+                    {Math.abs(report.metrics.favorites.change).toFixed(1)}%{" "}
+                    {reportType === "week" ? "先週比" : "先月比"}
+                  </div>
+                )}
             </div>
 
             {/* アクティブユーザー */}
@@ -199,12 +200,13 @@ export default function CompanyReportsPage() {
               <div className="text-4xl font-bold text-primary mb-2">
                 {report.metrics.activeUsers.count}
               </div>
-              {report.metrics.activeUsers.total !== undefined && (
-                <div className="text-sm text-gray-600">
-                  全体の{" "}
-                  {report.metrics.activeUsers.percentage?.toFixed(1)}%
-                </div>
-              )}
+              {"total" in report.metrics.activeUsers &&
+                report.metrics.activeUsers.total !== undefined && (
+                  <div className="text-sm text-gray-600">
+                    全体の{" "}
+                    {report.metrics.activeUsers.percentage?.toFixed(1)}%
+                  </div>
+                )}
             </div>
           </div>
 

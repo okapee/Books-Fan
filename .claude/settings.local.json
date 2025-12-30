@@ -26,7 +26,16 @@
       "Bash(else echo \".env file not found\")",
       "Bash(grep:*)",
       "Bash(git init:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git remote add:*)",
+      "Bash(git branch:*)",
+      "Bash(git push:*)",
+      "Bash(git fetch:*)",
+      "Bash(git ls-tree:*)",
+      "Bash(git pull:*)",
+      "Bash(openssl rand:*)",
+      "Bash(npm run build:*)"
     ],
     "deny": [],
     "ask": []

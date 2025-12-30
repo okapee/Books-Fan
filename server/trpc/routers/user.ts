@@ -27,6 +27,8 @@ export const userRouter = router({
         subscriptionStatus: true,
         premiumTrialStartedAt: true,
         premiumTrialEndsAt: true,
+        currentPeriodEnd: true,
+        companyId: true,
         aiUsageCount: true,
         aiUsageResetDate: true,
         createdAt: true,

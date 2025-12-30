@@ -383,7 +383,7 @@ export const aiSummaryRouter = router({
       }
 
       // レビューの所有者のみ削除可能
-      if (summary.review.userId !== ctx.session.user.id) {
+      if (summary.review?.userId !== ctx.session.user.id) {
         throw new TRPCError({
           code: "FORBIDDEN",
           message: "この要約を削除する権限がありません",

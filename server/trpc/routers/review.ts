@@ -365,7 +365,12 @@ export const reviewRouter = router({
 
   // ユーザーのレビューを取得
   getByUserId: publicProcedure
-    .input(z.object({ userId: z.string() }))
+    .input(
+      z.object({
+        userId: z.string(),
+        limit: z.number().optional(),
+      })
+    )
     .query(async ({ input }) => {
       const reviews = await prisma.review.findMany({
         where: { userId: input.userId },
@@ -373,6 +378,7 @@ export const reviewRouter = router({
           book: true,
         },
         orderBy: { createdAt: "desc" },
+        ...(input.limit && { take: input.limit }),
       });
 
       return reviews;

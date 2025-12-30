@@ -109,7 +109,7 @@ export async function getBookById(
 }
 
 // HTMLタグを除去する関数
-function stripHtmlTags(html: string | null): string | null {
+function stripHtmlTags(html: string | null | undefined): string | null {
   if (!html) return null;
 
   let text = html;
@@ -174,7 +174,7 @@ export function convertGoogleBookToBook(volume: GoogleBooksVolume) {
     author: volume.volumeInfo.authors?.join(", ") || "不明",
     publisher: volume.volumeInfo.publisher || null,
     publishedDate: volume.volumeInfo.publishedDate || null,
-    description: stripHtmlTags(volume.volumeInfo.description),
+    description: stripHtmlTags(volume.volumeInfo.description) || null,
     coverImageUrl: volume.volumeInfo.imageLinks?.thumbnail ||
                     volume.volumeInfo.imageLinks?.smallThumbnail ||
                     null,
