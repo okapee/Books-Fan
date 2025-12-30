@@ -2,6 +2,47 @@
 
 本番環境へのデプロイ時に使用するチェックリストです。
 
+## 🔐 環境変数管理について（重要）
+
+### .env.production の扱い
+
+**Q: .env.production はGitHubにpushするのでしょうか？**
+**A: いいえ、絶対にpushしません！**
+
+- `.gitignore` で除外されているため、GitHubにpushされることはありません
+- `.env.production` は**ローカルでの参照用メモ**として作成します
+- 実際の本番環境では、**Vercelのダッシュボードで直接環境変数を設定**します
+
+### 環境変数の管理フロー
+
+```
+1. ローカル: .env.production を作成（参照用）
+   ↓
+2. 値をコピー
+   ↓
+3. Vercel: ダッシュボード → Settings → Environment Variables で設定
+   ↓
+4. Vercelで安全に管理（GitHubには保存されない）
+```
+
+### OAuth認証情報について
+
+**Q: Google OAuthとLINE OAuthは開発環境でも本番環境でも値は変わらない？**
+**A: いいえ、開発環境と本番環境で異なる値を使用します！**
+
+**理由: リダイレクトURIが異なる**
+
+- **開発環境**: `http://localhost:3000/api/auth/callback/google`
+- **本番環境**: `https://books-fan.vercel.app/api/auth/callback/google`
+
+**推奨設定:**
+- Google Cloud Console で2つの OAuth クライアントIDを作成
+  - 1つ: 開発用（localhost用）
+  - 1つ: 本番用（Vercel URL用）
+- LINEも同様に、開発用と本番用で別のチャネルを作成
+
+---
+
 ## 📋 デプロイ前チェック
 
 ### 環境準備
@@ -9,7 +50,7 @@
 - [ ] GitHubアカウント作成済み
 - [ ] Vercelアカウント作成済み
 - [ ] PostgreSQLデータベース準備完了
-  - [ ] Supabase / Neon / Railway のいずれか
+  - [ ] Neon（推奨 - コスト最適化）
   - [ ] 接続文字列を取得済み
 - [ ] Google Cloud Console アカウント作成済み
 - [ ] OpenAI APIキー取得済み
@@ -33,39 +74,66 @@
 
 ## 🗄️ データベースセットアップ
 
-### Supabase（推奨）
+### Neon（推奨 - コスト最適化）
 
-- [ ] Supabase プロジェクト作成
+- [ ] Neon プロジェクト作成（https://neon.tech）
   - Project Name: `books-fan`
-  - Region: `Northeast Asia (Tokyo)`
-- [ ] データベースパスワード設定（安全な場所に保存）
+  - Region: `Asia Pacific (Tokyo)`
+  - Postgres version: `16`（最新を選択）
 - [ ] 接続文字列を取得
-  - Settings → Database → Connection string (URI)
-- [ ] `DATABASE_URL` と `DIRECT_URL` を記録
+  - Dashboard → Connection Details
+  - **Pooled connection** をコピー（DATABASE_URL用）
+  - **Direct connection** をコピー（DIRECT_URL用・同じでOK）
+- [ ] `DATABASE_URL` と `DIRECT_URL` を安全な場所に記録
 
 ## 🔑 環境変数設定
 
-`.env.production` を作成し、以下を設定：
+**⚠️ 重要なセキュリティ情報:**
+- `.env.production` は**ローカルでの参照用メモ**です
+- **GitHubにpushしません**（.gitignoreで除外済み）
+- 実際の本番環境では**Vercelダッシュボードで設定**します
+
+ローカルに `.env.production` を作成し、以下を設定：
 
 ### 必須項目
 
-- [ ] `DATABASE_URL` - データベース接続文字列
-- [ ] `DIRECT_URL` - 直接接続文字列（Supabase）
-- [ ] `NEXTAUTH_SECRET` - 生成方法:
+- [ ] `DATABASE_URL` - Neon Pooled connection
+  ```
+  postgresql://user:password@ep-xxx.ap-southeast-1.aws.neon.tech/neondb?sslmode=require
+  ```
+- [ ] `DIRECT_URL` - Neon Direct connection（同じ接続文字列でOK）
+- [ ] `NEXTAUTH_SECRET` - 本番用に新しく生成:
   ```bash
   openssl rand -base64 32
   ```
-- [ ] `NEXTAUTH_URL` - 本番URL（後で更新可能）
+  **⚠️ 開発環境とは異なる値を使用**
+- [ ] `NEXTAUTH_URL` - 本番URL（例: `https://books-fan.vercel.app`）
 
-### OAuth設定
+### OAuth設定（本番用の新しい認証情報が必要）
 
-- [ ] Google OAuth
-  - [ ] `GOOGLE_CLIENT_ID`
-  - [ ] `GOOGLE_CLIENT_SECRET`
-  - [ ] Google Cloud Console でリダイレクトURI設定
-- [ ] LINE OAuth（オプション）
-  - [ ] `LINE_CLIENT_ID`
-  - [ ] `LINE_CLIENT_SECRET`
+**⚠️ 重要: 開発環境と本番環境で値は異なります！**
+
+- [ ] **Google OAuth（本番用）**
+  - [ ] Google Cloud Console で新しいOAuthクライアントID作成
+    - Application type: Web application
+    - Name: Books Fan Production
+  - [ ] リダイレクトURI設定:
+    ```
+    https://books-fan.vercel.app/api/auth/callback/google
+    ```
+  - [ ] `GOOGLE_CLIENT_ID`（本番用）
+  - [ ] `GOOGLE_CLIENT_SECRET`（本番用）
+
+- [ ] **LINE OAuth（オプション・本番用）**
+  - [ ] LINE Developers で新しいチャネル作成
+    - Provider: Books Fan
+    - Channel type: LINE Login
+  - [ ] Callback URL設定:
+    ```
+    https://books-fan.vercel.app/api/auth/callback/line
+    ```
+  - [ ] `LINE_CLIENT_ID`（本番用）
+  - [ ] `LINE_CLIENT_SECRET`（本番用）
 
 ### API Keys
 
@@ -95,13 +163,18 @@
 
 ### Vercelセットアップ
 
-- [ ] Vercelにログイン
-- [ ] 新規プロジェクト作成
-- [ ] GitHubリポジトリを選択
-- [ ] フレームワーク設定: Next.js
-- [ ] 環境変数をすべて追加
-  - Environment: Production
-- [ ] Deploy をクリック
+- [ ] Vercelにログイン（https://vercel.com）
+- [ ] 新規プロジェクト作成（Add New → Project）
+- [ ] GitHubリポジトリを選択: `okapee/Books-Fan`
+- [ ] フレームワーク設定: Next.js（自動検出）
+- [ ] **環境変数をすべて追加**（重要！）
+  - Settings → Environment Variables
+  - `.env.production` の内容を1つずつコピー&ペースト
+  - Environment: **Production** を選択
+  - **💡 ここで設定した値が本番環境で使用されます**
+  - **✅ GitHubには保存されません（安全）**
+  - 合計10個以上の環境変数を設定
+- [ ] Deploy をクリック（初回デプロイ開始）
 
 ### デプロイ後
 
@@ -133,15 +206,24 @@ npx prisma generate
 
 ## ⚙️ 外部サービス設定
 
-### Google OAuth
+### Google OAuth（本番用の設定確認）
 
-- [ ] Google Cloud Console
-  - [ ] OAuth 2.0クライアントID作成
-  - [ ] リダイレクトURI追加:
+- [ ] Google Cloud Console（https://console.cloud.google.com）
+  - [ ] 本番用OAuth 2.0クライアントIDが作成済みか確認
+  - [ ] リダイレクトURIが正しいか確認:
     ```
-    https://your-domain.com/api/auth/callback/google
+    https://books-fan.vercel.app/api/auth/callback/google
     ```
-  - [ ] OAuth同意画面を設定
+  - [ ] OAuth同意画面が公開されているか確認
+
+### LINE OAuth（本番用の設定確認・オプション）
+
+- [ ] LINE Developers Console
+  - [ ] 本番用チャネルが作成済みか確認
+  - [ ] Callback URLが正しいか確認:
+    ```
+    https://books-fan.vercel.app/api/auth/callback/line
+    ```
 
 ### Stripe Webhook
 
@@ -193,13 +275,35 @@ npx prisma generate
 
 ## 🔒 セキュリティチェック
 
+**環境変数の安全性確認:**
 - [ ] `.env` ファイルがGitにコミットされていない
-- [ ] `.gitignore` に `.env*` が含まれている
-- [ ] 本番環境の `NEXTAUTH_SECRET` が開発環境と異なる
-- [ ] Stripe APIキーが本番用（`sk_live_...`）
-- [ ] データベースパスワードが強力
+  ```bash
+  # 確認コマンド
+  git ls-files | grep "\.env"
+  # 結果: .env.example のみ表示されればOK
+  ```
+- [ ] `.gitignore` に以下が含まれている:
+  - `.env`
+  - `.env*.local`
+  - `.env.production`
+  - `.env.development`
+  - `*.env`
+
+**認証情報の確認:**
+- [ ] 本番環境の `NEXTAUTH_SECRET` が開発環境と**異なる**（新しく生成）
+- [ ] Google OAuth が本番用（開発環境とは**別のクライアントID**）
+- [ ] LINE OAuth が本番用（開発環境とは**別のチャネル**）
+- [ ] Stripe APIキーが本番用（`sk_live_...`, `pk_live_...`）
+- [ ] OpenAI APIキーが本番用（開発環境と同じでOK）
+
+**データベース:**
+- [ ] Neon データベースパスワードが強力（自動生成されたもの）
 - [ ] OAuth リダイレクトURIが本番URL
-- [ ] すべてのAPIキーが安全に管理されている
+
+**管理方法:**
+- [ ] すべての環境変数がVercelダッシュボードに設定済み
+- [ ] `.env.production` がローカルのみに存在
+- [ ] パスワード管理ツール（1Password等）に重要な情報を保存済み
 
 ## 📊 パフォーマンスチェック
 
@@ -251,8 +355,9 @@ npx prisma generate
 ## 📞 サポート
 
 - Vercel: https://vercel.com/support
-- Supabase: https://supabase.com/support
+- Neon: https://neon.tech/docs
 - Stripe: https://support.stripe.com/
+- OpenAI: https://help.openai.com/
 
 ---
 
