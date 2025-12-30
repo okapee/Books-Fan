@@ -1,0 +1,374 @@
+// This is your Prisma schema file
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// NextAuth.js Models
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// ユーザー
+model User {
+  id            String    @id @default(cuid())
+  email         String?   @unique
+  emailVerified DateTime?
+  name          String?
+  image         String?
+  bio           String?
+
+  membershipType MembershipType @default(FREE)
+
+  // 企業アカウント
+  companyId        String?
+  companyRole      String?  @default("MEMBER") // ADMIN or MEMBER
+  company          Company? @relation(fields: [companyId], references: [id])
+
+  // Stripe
+  stripeCustomerId       String?   @unique
+  stripeSubscriptionId   String?   @unique
+  subscriptionStatus     SubscriptionStatus @default(NONE)
+  currentPeriodEnd       DateTime?
+
+  // Premium トライアル（2週間無料お試し）
+  premiumTrialStartedAt  DateTime?
+  premiumTrialEndsAt     DateTime?
+
+  // AI使用制限
+  aiUsageCount     Int      @default(0)
+  aiUsageResetDate DateTime @default(now())
+
+  // LINE連携
+  lineUserId               String?   @unique
+  lineAccessToken          String?   @db.Text
+  lineRefreshToken         String?   @db.Text
+  lineTokenExpiresAt       DateTime?
+  lineNotificationsEnabled Boolean   @default(true)
+
+  // NextAuth.js Relations
+  accounts Account[]
+  sessions Session[]
+
+  // リレーション
+  reviews      Review[]
+  aiSummaries  AISummary[]
+  favoriteBooks FavoriteBook[]
+  reviewLikes  ReviewLike[]
+  reviewComments ReviewComment[]
+
+  // フォロー関係
+  following    Follow[] @relation("UserFollowing")  // このユーザーがフォローしている
+  followers    Follow[] @relation("UserFollowers")  // このユーザーをフォローしている
+
+  // 通知
+  sentNotifications     Notification[] @relation("NotificationSender")     // 送信した通知
+  receivedNotifications Notification[] @relation("NotificationReceiver")   // 受信した通知
+
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([email])
+  @@index([companyId])
+}
+
+// 企業
+model Company {
+  id           String   @id @default(cuid())
+  name         String
+  slug         String   @unique // 企業識別用スラッグ
+  domain       String?  // メールドメイン（例: company.com）
+
+  // 契約情報
+  plan         String   @default("CORPORATE") // プランタイプ
+  maxUsers     Int      @default(100)         // 最大ユーザー数
+  contractType String   @default("MONTHLY")   // MONTHLY or ANNUAL
+
+  // Stripe（法人用）
+  stripeCustomerId       String?   @unique
+  stripeSubscriptionId   String?   @unique
+  subscriptionStatus     SubscriptionStatus @default(NONE)
+  currentPeriodEnd       DateTime?
+
+  // AI使用制限（企業全体）
+  aiUsageLimit      Int      @default(1000) // 月間AI使用回数制限
+  aiUsageCount      Int      @default(0)
+  aiUsageResetDate  DateTime @default(now())
+
+  // 設定
+  allowPublicContent Boolean  @default(false) // 企業外への情報公開を許可するか
+
+  // リレーション
+  users        User[]
+  invitations  CompanyInvitation[]
+
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([slug])
+  @@index([domain])
+}
+
+// 本
+model Book {
+  id            String   @id @default(cuid())
+  isbn          String?  @unique
+  googleBooksId String?  @unique
+  title         String
+  author        String
+  publisher     String?
+  publishedDate String?
+  description   String?  @db.Text
+  coverImageUrl String?
+  pageCount     Int?
+  categories    String[] // ジャンル
+
+  averageRating Float?   @default(0)
+  reviewCount   Int      @default(0)
+
+  // リレーション
+  reviews       Review[]
+  aiSummaries   AISummary[]
+  favoriteBooks FavoriteBook[]
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([isbn])
+  @@index([googleBooksId])
+  @@index([title])
+  @@index([categories])
+  @@index([averageRating])
+  @@index([reviewCount])
+}
+
+// レビュー
+model Review {
+  id         String   @id @default(cuid())
+  userId     String
+  bookId     String
+
+  rating     Int      // 1-5
+  content    String   @db.Text
+  isPublic   Boolean  @default(true)
+
+  readCompletedDate DateTime?
+  helpfulCount      Int       @default(0)
+
+  // リレーション
+  user       User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  book       Book          @relation(fields: [bookId], references: [id], onDelete: Cascade)
+  aiSummary  AISummary?
+  likes      ReviewLike[]
+  comments   ReviewComment[]
+
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@unique([userId, bookId])
+  @@index([userId])
+  @@index([bookId])
+  @@index([createdAt])
+  @@index([createdAt, bookId])
+}
+
+// レビューのいいね
+model ReviewLike {
+  id       String   @id @default(cuid())
+  userId   String
+  reviewId String
+
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  review   Review   @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@unique([userId, reviewId])
+  @@index([userId])
+  @@index([reviewId])
+}
+
+// レビューのコメント
+model ReviewComment {
+  id       String   @id @default(cuid())
+  userId   String
+  reviewId String
+
+  content  String   @db.Text
+
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  review   Review   @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([reviewId])
+  @@index([createdAt])
+}
+
+// AI要点
+model AISummary {
+  id                String   @id @default(cuid())
+  userId            String   // 作成者
+  bookId            String
+  reviewId          String?  @unique
+
+  keyPoints         Json     // 要点の配列
+  summaryText       String   @db.Text
+  visualizationData Json?    // マインドマップ用データ
+
+  isPublic          Boolean  @default(true)  // デフォルトで公開（共有）
+  isShared          Boolean  @default(true)  // 他のユーザーと共有するか
+
+  // リレーション
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  book              Book     @relation(fields: [bookId], references: [id], onDelete: Cascade)
+  review            Review?  @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+
+  createdAt         DateTime @default(now())
+
+  @@index([userId])
+  @@index([bookId])
+  @@index([isShared])
+}
+
+// お気に入り
+model FavoriteBook {
+  id        String   @id @default(cuid())
+  userId    String
+  bookId    String
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  book      Book     @relation(fields: [bookId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@unique([userId, bookId])
+  @@index([userId])
+  @@index([bookId])
+  @@index([createdAt])
+}
+
+// 企業招待
+model CompanyInvitation {
+  id         String   @id @default(cuid())
+  companyId  String
+  email      String
+  token      String   @unique
+  role       String   @default("MEMBER") // ADMIN or MEMBER
+  status     String   @default("PENDING") // PENDING, ACCEPTED, EXPIRED
+
+  company    Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+
+  @@unique([companyId, email])
+  @@index([email])
+  @@index([token])
+  @@index([companyId])
+}
+
+// Enum: 会員タイプ
+enum MembershipType {
+  FREE
+  PREMIUM
+  CORPORATE
+}
+
+// Enum: サブスクリプションステータス
+enum SubscriptionStatus {
+  NONE
+  ACTIVE
+  CANCELED
+  PAST_DUE
+  UNPAID
+}
+
+// Enum: 通知タイプ
+enum NotificationType {
+  FOLLOW          // フォローされた
+  REVIEW_LIKE     // レビューにいいねされた
+  REVIEW_COMMENT  // レビューにコメントされた
+}
+
+// フォロー
+model Follow {
+  id          String   @id @default(cuid())
+  followerId  String   // フォローする人
+  followingId String   // フォローされる人
+
+  follower    User     @relation("UserFollowing", fields: [followerId], references: [id], onDelete: Cascade)
+  following   User     @relation("UserFollowers", fields: [followingId], references: [id], onDelete: Cascade)
+
+  createdAt   DateTime @default(now())
+
+  @@unique([followerId, followingId])
+  @@index([followerId])
+  @@index([followingId])
+}
+
+// 通知
+model Notification {
+  id         String           @id @default(cuid())
+  type       NotificationType // 通知の種類
+  senderId   String?          // 通知を送信したユーザー（システム通知の場合はnull）
+  receiverId String           // 通知を受信したユーザー
+
+  // 関連するリソースのID
+  reviewId      String?
+  commentId     String?
+  bookGoogleId  String? // 本のGoogle Books ID（レビュー関連通知用）
+
+  message    String           @db.Text // 通知メッセージ
+  isRead     Boolean          @default(false) // 既読フラグ
+
+  sender     User?            @relation("NotificationSender", fields: [senderId], references: [id], onDelete: Cascade)
+  receiver   User             @relation("NotificationReceiver", fields: [receiverId], references: [id], onDelete: Cascade)
+
+  createdAt  DateTime         @default(now())
+
+  @@index([receiverId])
+  @@index([isRead])
+  @@index([createdAt])
+}
