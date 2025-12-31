@@ -6,6 +6,9 @@ import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { ReviewList } from "@/components/book/ReviewList";
 import { useState, useEffect } from "react";
+import { StructuredData } from "@/components/seo/StructuredData";
+import { generateWebsiteStructuredData } from "@/lib/seo";
+import { ShareButtons } from "@/components/social/ShareButtons";
 
 export default function BookDetailPage() {
   const params = useParams();
@@ -152,8 +155,26 @@ export default function BookDetailPage() {
     );
   }
 
+  // 構造化データの生成
+  const bookStructuredData = book ? {
+    "@context": "https://schema.org",
+    "@type": "Book",
+    "name": book.title,
+    "author": {
+      "@type": "Person",
+      "name": book.author,
+    },
+    "image": book.coverImageUrl,
+    "publisher": book.publisher,
+    "datePublished": book.publishedDate,
+    "isbn": book.isbn,
+    "numberOfPages": book.pageCount,
+    "description": book.description?.replace(/<[^>]*>/g, '').substring(0, 200),
+  } : null;
+
   return (
     <div className="min-h-screen bg-gray-50 py-12">
+      {bookStructuredData && <StructuredData data={bookStructuredData} />}
       <div className="container mx-auto px-4 max-w-6xl">
         {/* Book Detail Card */}
         <div className="bg-white rounded-xl shadow-lg p-4 sm:p-6 md:p-8 mb-8">
@@ -277,6 +298,18 @@ export default function BookDetailPage() {
               </p>
             </div>
           )}
+
+          {/* Share Buttons */}
+          <div className="mt-8 pt-8 border-t border-gray-200">
+            <h3 className="text-lg font-bold text-gray-800 mb-4">
+              この本をシェア
+            </h3>
+            <ShareButtons
+              url={`/books/${bookId}`}
+              title={book.title}
+              description={`${book.author}著「${book.title}」をチェック`}
+            />
+          </div>
         </div>
 
         {/* AI Summary Section */}

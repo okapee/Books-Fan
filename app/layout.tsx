@@ -6,6 +6,7 @@ import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { PopupManager } from "@/components/modals/PopupManager";
 import { TrialExpiredBanner } from "@/components/banners/TrialExpiredBanner";
+import { generateMetadata as generateSEOMetadata } from "@/lib/seo";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -20,20 +21,9 @@ const merriweather = Merriweather({
   display: "swap",
 });
 
-export const metadata: Metadata = {
-  title: "Books Fan - 本好きのためのレビュー&推薦プラットフォーム",
-  description:
-    "本のレビューを投稿・閲覧し、AIで要点を整理・可視化。あなたにぴったりの本と出会えるプラットフォーム",
-  keywords: [
-    "本",
-    "レビュー",
-    "読書",
-    "AI",
-    "要約",
-    "推薦",
-    "ブックレビュー",
-  ],
-};
+export const metadata: Metadata = generateSEOMetadata({
+  url: "/",
+});
 
 export default function RootLayout({
   children,

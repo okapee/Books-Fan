@@ -7,6 +7,9 @@ import { useState } from "react";
 import Link from "next/link";
 import { FollowButton } from "@/components/user/FollowButton";
 import { UserStats } from "@/components/user/UserStats";
+import { StructuredData } from "@/components/seo/StructuredData";
+import { generateBookReviewStructuredData } from "@/lib/seo";
+import { ShareButtons } from "@/components/social/ShareButtons";
 
 export default function ReviewDetailPage() {
   const params = useParams();
@@ -192,6 +195,18 @@ export default function ReviewDetailPage() {
   const isOwner = session?.user?.id === review.userId;
   const isLiked = likeStatus?.isLiked || false;
 
+  // 構造化データの生成（View Modeの時のみ）
+  const reviewStructuredData = book && review && !isEditMode ? generateBookReviewStructuredData(
+    book.title,
+    book.author,
+    book.coverImageUrl,
+    review.rating,
+    review.content,
+    review.user.name || "匿名ユーザー",
+    review.createdAt.toISOString(),
+    `/books/${bookId}/review/${reviewId}`
+  ) : null;
+
   // Edit Mode
   if (isEditMode && isOwner) {
     return (
@@ -350,6 +365,7 @@ export default function ReviewDetailPage() {
   // View Mode (Default)
   return (
     <div className="min-h-screen bg-gray-50 py-12">
+      {reviewStructuredData && <StructuredData data={reviewStructuredData} />}
       <div className="container mx-auto px-4 max-w-4xl">
         {/* Review Card */}
         <div className="bg-white rounded-xl shadow-lg p-8 mb-6">
@@ -500,6 +516,22 @@ export default function ReviewDetailPage() {
               <span className="text-2xl">{isLiked ? "❤️" : "🤍"}</span>
               <span>{likeCount || 0} いいね</span>
             </button>
+          </div>
+
+          {/* Share Buttons */}
+          <div className="mt-6 pt-6 border-t border-gray-100">
+            <h3 className="text-sm font-semibold text-gray-700 mb-3">
+              このレビューをシェア
+            </h3>
+            <ShareButtons
+              url={`/books/${bookId}/review/${reviewId}`}
+              title={book ? `${book.title}のレビュー` : "レビュー"}
+              description={
+                book && review
+                  ? `${review.user.name || "匿名ユーザー"}さんの「${book.title}」のレビュー（評価: ${review.rating}/5）`
+                  : undefined
+              }
+            />
           </div>
         </div>
 
