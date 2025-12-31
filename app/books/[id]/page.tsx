@@ -9,6 +9,7 @@ import { useState, useEffect } from "react";
 import { StructuredData } from "@/components/seo/StructuredData";
 import { generateWebsiteStructuredData } from "@/lib/seo";
 import { ShareButtons } from "@/components/social/ShareButtons";
+import { PurchaseButtons } from "@/components/book/PurchaseButtons";
 
 export default function BookDetailPage() {
   const params = useParams();
@@ -298,6 +299,11 @@ export default function BookDetailPage() {
               </p>
             </div>
           )}
+
+          {/* Purchase Buttons */}
+          <div className="mt-8 pt-8 border-t border-gray-200">
+            <PurchaseButtons isbn={book.isbn} title={book.title} />
+          </div>
 
           {/* Share Buttons */}
           <div className="mt-8 pt-8 border-t border-gray-200">
