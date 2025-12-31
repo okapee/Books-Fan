@@ -14,6 +14,11 @@ export default function ContactPage() {
     message: "",
   });
   const [submitted, setSubmitted] = useState(false);
+  const [errors, setErrors] = useState({
+    name: "",
+    email: "",
+    message: "",
+  });
 
   const sendContactMutation = trpc.contact.send.useMutation({
     onSuccess: () => {
@@ -24,16 +29,81 @@ export default function ContactPage() {
     },
   });
 
+  const validateField = (name: string, value: string) => {
+    let error = "";
+
+    if (name === "name" && value.trim().length === 0) {
+      error = "お名前を入力してください";
+    } else if (name === "email") {
+      if (value.trim().length === 0) {
+        error = "メールアドレスを入力してください";
+      } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+        error = "有効なメールアドレスを入力してください";
+      }
+    } else if (name === "message") {
+      if (value.trim().length > 0 && value.trim().length < 10) {
+        error = "お問い合わせ内容は10文字以上入力してください";
+      } else if (value.trim().length === 0) {
+        error = "お問い合わせ内容を入力してください";
+      }
+    }
+
+    return error;
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
+    // 全フィールドのバリデーション
+    const newErrors = {
+      name: validateField("name", formData.name),
+      email: validateField("email", formData.email),
+      message: validateField("message", formData.message),
+    };
+
+    setErrors(newErrors);
+
+    // エラーがある場合は送信しない
+    if (newErrors.name || newErrors.email || newErrors.message) {
+      return;
+    }
+
     sendContactMutation.mutate(formData);
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value,
+      [name]: value,
     });
+
+    // リアルタイムバリデーション（入力中の場合のみ）
+    if ((name === "name" || name === "email" || name === "message") && value.length > 0) {
+      const error = validateField(name, value);
+      setErrors({
+        ...errors,
+        [name]: error,
+      });
+    } else if (name === "name" || name === "email" || name === "message") {
+      setErrors({
+        ...errors,
+        [name]: "",
+      });
+    }
+  };
+
+  const isFormValid = () => {
+    return (
+      formData.name.trim().length > 0 &&
+      formData.email.trim().length > 0 &&
+      /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email) &&
+      formData.message.trim().length >= 10 &&
+      !errors.name &&
+      !errors.email &&
+      !errors.message
+    );
   };
 
   if (submitted) {
@@ -108,7 +178,7 @@ export default function ContactPage() {
 
           {/* Contact Form */}
           <div className="md:col-span-2">
-            <form onSubmit={handleSubmit} className="bg-white rounded-2xl shadow-lg p-8 space-y-6">
+            <form onSubmit={handleSubmit} className="bg-white rounded-2xl shadow-lg p-8 space-y-6" noValidate>
               <div>
                 <label htmlFor="name" className="block text-sm font-semibold text-gray-700 mb-2">
                   お名前 <span className="text-red-500">*</span>
@@ -117,12 +187,14 @@ export default function ContactPage() {
                   type="text"
                   id="name"
                   name="name"
-                  required
                   value={formData.name}
                   onChange={handleChange}
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent"
                   placeholder="山田太郎"
                 />
+                {errors.name && (
+                  <p className="text-red-500 text-sm mt-1">{errors.name}</p>
+                )}
               </div>
 
               <div>
@@ -133,12 +205,14 @@ export default function ContactPage() {
                   type="email"
                   id="email"
                   name="email"
-                  required
                   value={formData.email}
                   onChange={handleChange}
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent"
                   placeholder="example@email.com"
                 />
+                {errors.email && (
+                  <p className="text-red-500 text-sm mt-1">{errors.email}</p>
+                )}
               </div>
 
               <div>
@@ -148,7 +222,6 @@ export default function ContactPage() {
                 <select
                   id="category"
                   name="category"
-                  required
                   value={formData.category}
                   onChange={handleChange}
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent"
@@ -168,18 +241,25 @@ export default function ContactPage() {
                 <textarea
                   id="message"
                   name="message"
-                  required
                   value={formData.message}
                   onChange={handleChange}
                   rows={6}
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent resize-none"
                   placeholder="できるだけ詳しくお書きください"
                 />
+                {errors.message && (
+                  <p className="text-red-500 text-sm mt-1">{errors.message}</p>
+                )}
+                {formData.message.length > 0 && formData.message.length < 10 && (
+                  <p className="text-gray-500 text-sm mt-1">
+                    あと{10 - formData.message.length}文字必要です
+                  </p>
+                )}
               </div>
 
               <button
                 type="submit"
-                disabled={sendContactMutation.isPending}
+                disabled={sendContactMutation.isPending || !isFormValid()}
                 className="w-full bg-blue-600 text-white px-8 py-4 rounded-xl font-semibold hover:bg-blue-700 transition shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {sendContactMutation.isPending ? "送信中..." : "送信する"}

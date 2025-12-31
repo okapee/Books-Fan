@@ -4,9 +4,11 @@ import { useSession, signIn, signOut } from "next-auth/react";
 import Link from "next/link";
 import Image from "next/image";
 import { NotificationBell } from "@/components/notifications/NotificationBell";
+import { ensureHttps } from "@/lib/utils";
 
 export function Header() {
   const { data: session } = useSession();
+  const userImageUrl = ensureHttps(session?.user?.image);
 
   return (
     <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
@@ -67,13 +69,14 @@ export function Header() {
                     href="/profile"
                     className="flex items-center space-x-1 sm:space-x-2 hover:opacity-80 transition"
                   >
-                    {session.user.image ? (
+                    {userImageUrl ? (
                       <Image
-                        src={session.user.image}
+                        src={userImageUrl}
                         alt={session.user.name || "User"}
                         width={32}
                         height={32}
                         className="rounded-full w-7 h-7 sm:w-8 sm:h-8"
+                        unoptimized
                       />
                     ) : (
                       <div className="w-7 h-7 sm:w-8 sm:h-8 bg-primary text-white rounded-full flex items-center justify-center text-xs sm:text-sm">
