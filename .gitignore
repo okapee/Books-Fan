@@ -36,6 +36,7 @@ yarn-error.log*
 .env.production
 .env.test
 *.env
+env.prod
 
 # vercel
 .vercel
@@ -47,3 +48,6 @@ next-env.d.ts
 # prisma
 prisma/migrations/migration_lock.toml
 /public/uploads/
+
+# claude
+.claude/settings.local.json
