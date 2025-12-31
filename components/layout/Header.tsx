@@ -33,6 +33,12 @@ export function Header() {
             {session && (
               <>
                 <Link
+                  href="/reading"
+                  className="text-gray-700 hover:text-primary transition"
+                >
+                  読書管理
+                </Link>
+                <Link
                   href="/profile"
                   className="text-gray-700 hover:text-primary transition"
                 >

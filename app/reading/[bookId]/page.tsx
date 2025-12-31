@@ -14,16 +14,30 @@ export default function ReadingSessionPage() {
   const bookId = params.bookId as string;
   const { data: session, status } = useSession();
   const [showReviewPrompt, setShowReviewPrompt] = useState(false);
+  const [dbBookId, setDbBookId] = useState<string | null>(null);
 
   const { data: book, isLoading: bookLoading } =
     trpc.book.getByGoogleId.useQuery({
       googleBooksId: bookId,
     });
 
+  const getOrCreateMutation = trpc.book.getOrCreate.useMutation({
+    onSuccess: (data) => {
+      setDbBookId(data.id);
+    },
+  });
+
+  // Get database book ID when book data is loaded
+  if (book && !dbBookId && !getOrCreateMutation.isPending) {
+    getOrCreateMutation.mutate({
+      googleBooksId: book.id,
+    });
+  }
+
   const { data: statusData } = trpc.reading.getStatus.useQuery({
-    bookId: book?.id || "",
+    bookId: dbBookId || "",
   }, {
-    enabled: !!book?.id,
+    enabled: !!dbBookId,
   });
 
   if (status === "unauthenticated") {
@@ -126,13 +140,13 @@ export default function ReadingSessionPage() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
           {/* タイマー */}
           <div>
-            {statusData?.status === "READING" ? (
+            {dbBookId && statusData?.status === "READING" ? (
               <PomodoroTimer
-                bookId={book.id}
+                bookId={dbBookId}
                 bookTitle={book.title}
                 onComplete={handleSessionComplete}
               />
-            ) : (
+            ) : dbBookId && statusData?.status !== "READING" ? (
               <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-6 sm:p-8 text-center">
                 <p className="text-yellow-800 mb-4 text-sm sm:text-base">
                   タイマーを使用するには、この本を「読書中」ステータスに設定してください
@@ -144,12 +158,20 @@ export default function ReadingSessionPage() {
                   本の詳細ページへ
                 </Link>
               </div>
+            ) : (
+              <div className="bg-white rounded-xl shadow-lg p-6 sm:p-8 text-center">
+                <p className="text-gray-500">読込中...</p>
+              </div>
             )}
           </div>
 
           {/* セッション履歴 */}
           <div className="bg-white rounded-xl shadow-lg p-4 sm:p-6">
-            <SessionHistory bookId={book.id} />
+            {dbBookId ? (
+              <SessionHistory bookId={dbBookId} />
+            ) : (
+              <div className="text-center py-8 text-gray-500">読込中...</div>
+            )}
           </div>
         </div>
       </div>
