@@ -31,6 +31,8 @@ export const userRouter = router({
         companyId: true,
         aiUsageCount: true,
         aiUsageResetDate: true,
+        preferredGenres: true,
+        hasCompletedGenreSelection: true,
         createdAt: true,
         _count: {
           select: {
@@ -249,4 +251,37 @@ export const userRouter = router({
       trialEndsAt: updatedUser.premiumTrialEndsAt,
     };
   }),
+
+  // ジャンル設定を更新
+  updateGenrePreferences: publicProcedure
+    .input(
+      z.object({
+        genres: z.array(z.string()),
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      if (!ctx.session?.user?.id) {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "ログインが必要です",
+        });
+      }
+
+      const updatedUser = await prisma.user.update({
+        where: {
+          id: ctx.session.user.id,
+        },
+        data: {
+          preferredGenres: input.genres,
+          hasCompletedGenreSelection: true,
+        },
+        select: {
+          id: true,
+          preferredGenres: true,
+          hasCompletedGenreSelection: true,
+        },
+      });
+
+      return updatedUser;
+    }),
 });

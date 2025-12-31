@@ -6,6 +6,7 @@ import { trpc } from "@/lib/trpc";
 import { PremiumUpgradePopup } from "./PremiumUpgradePopup";
 import { OnboardingTutorial } from "./OnboardingTutorial";
 import { TrialExpiredPopup } from "./TrialExpiredPopup";
+import { GenreSelectionPopup } from "./GenreSelectionPopup";
 
 const PREMIUM_POPUP_KEY = "premium_popup_dismissed_at";
 const ONBOARDING_KEY = "onboarding_completed";
@@ -17,14 +18,29 @@ export function PopupManager() {
   const [showPremiumPopup, setShowPremiumPopup] = useState(false);
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [showTrialExpired, setShowTrialExpired] = useState(false);
+  const [showGenreSelection, setShowGenreSelection] = useState(false);
+
+  // Get current user data
+  const { data: currentUser } = trpc.user.getCurrent.useQuery(undefined, {
+    enabled: !!session?.user,
+  });
 
   // Get premium status to check trial expiration
   const { data: premiumStatus } = trpc.user.getPremiumStatus.useQuery(undefined, {
     enabled: !!session?.user,
   });
 
+  // Update genre preferences mutation
+  const updateGenrePreferences = trpc.user.updateGenrePreferences.useMutation();
+
   useEffect(() => {
-    if (!session?.user) return;
+    if (!session?.user || !currentUser) return;
+
+    // 最優先: ジャンル選択がまだの場合は表示
+    if (!currentUser.hasCompletedGenreSelection) {
+      setShowGenreSelection(true);
+      return;
+    }
 
     // Check if trial has expired
     if (premiumStatus) {
@@ -88,7 +104,7 @@ export function PopupManager() {
     }, 5000);
 
     return () => clearTimeout(timer);
-  }, [session, premiumStatus]);
+  }, [session, currentUser, premiumStatus]);
 
   const handlePremiumPopupClose = (dontShowAgain: boolean) => {
     setShowPremiumPopup(false);
@@ -107,8 +123,22 @@ export function PopupManager() {
     localStorage.setItem(TRIAL_EXPIRED_POPUP_KEY, Date.now().toString());
   };
 
+  const handleGenreSelectionComplete = async (selectedGenres: string[]) => {
+    try {
+      await updateGenrePreferences.mutateAsync({ genres: selectedGenres });
+      setShowGenreSelection(false);
+    } catch (error) {
+      console.error("Failed to update genre preferences:", error);
+      alert("ジャンルの保存に失敗しました。もう一度お試しください。");
+    }
+  };
+
   return (
     <>
+      <GenreSelectionPopup
+        isOpen={showGenreSelection}
+        onComplete={handleGenreSelectionComplete}
+      />
       <OnboardingTutorial
         isOpen={showOnboarding}
         onComplete={handleOnboardingComplete}

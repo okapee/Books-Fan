@@ -78,6 +78,10 @@ model User {
   aiUsageCount     Int      @default(0)
   aiUsageResetDate DateTime @default(now())
 
+  // ジャンル設定
+  preferredGenres            String[]  @default([])
+  hasCompletedGenreSelection Boolean   @default(false)
+
   // LINE連携
   lineUserId               String?   @unique
   lineAccessToken          String?   @db.Text
