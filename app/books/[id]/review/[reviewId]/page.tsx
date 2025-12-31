@@ -199,7 +199,7 @@ export default function ReviewDetailPage() {
   const reviewStructuredData = book && review && !isEditMode ? generateBookReviewStructuredData(
     book.title,
     book.author,
-    book.coverImageUrl,
+    book.coverImageUrl || undefined,
     review.rating,
     review.content,
     review.user.name || "匿名ユーザー",

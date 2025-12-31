@@ -1,5 +1,5 @@
 import { MetadataRoute } from "next";
-import { db } from "@/server/db";
+import { prisma } from "@/lib/prisma";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://books-fan.com";
@@ -58,7 +58,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   try {
     // データベースから全ての本を取得（Google Books IDのみ）
-    const books = await db.book.findMany({
+    const books = await prisma.book.findMany({
       select: {
         googleBooksId: true,
         updatedAt: true,

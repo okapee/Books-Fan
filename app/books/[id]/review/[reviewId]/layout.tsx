@@ -1,18 +1,18 @@
 import { Metadata } from "next";
 import { generateBookReviewMetadata } from "@/lib/seo";
-import { db } from "@/server/db";
+import { prisma } from "@/lib/prisma";
 
 type Props = {
-  params: { id: string; reviewId: string };
+  params: Promise<{ id: string; reviewId: string }>;
   children: React.ReactNode;
 };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { id: bookId, reviewId } = params;
+  const { id: bookId, reviewId } = await params;
 
   try {
     // レビューをデータベースから取得
-    const review = await db.review.findUnique({
+    const review = await prisma.review.findUnique({
       where: { id: reviewId },
       include: {
         user: {

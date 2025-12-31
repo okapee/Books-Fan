@@ -2,12 +2,12 @@ import { Metadata } from "next";
 import { generateMetadata as generateSEOMetadata } from "@/lib/seo";
 
 type Props = {
-  params: { id: string };
+  params: Promise<{ id: string }>;
   children: React.ReactNode;
 };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const bookId = params.id;
+  const { id: bookId } = await params;
 
   // Google Books APIから本の情報を取得
   try {
