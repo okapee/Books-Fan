@@ -100,7 +100,7 @@ export function PremiumUpgradePopup({ isOpen, onClose }: PremiumUpgradePopupProp
               <div>
                 <p className="text-sm text-gray-600 mb-1">今すぐ始める</p>
                 <div className="flex items-baseline gap-2">
-                  <span className="text-4xl font-bold text-purple-600">¥500</span>
+                  <span className="text-4xl font-bold text-purple-600">¥980</span>
                   <span className="text-gray-600">/月</span>
                 </div>
               </div>
