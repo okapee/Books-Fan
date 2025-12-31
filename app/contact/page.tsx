@@ -3,22 +3,30 @@
 import { useState } from "react";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
+import { trpc } from "@/lib/trpc";
 
 export default function ContactPage() {
   const { data: session } = useSession();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
-    category: "general",
+    category: "general" as "general" | "technical" | "billing" | "feature" | "other",
     message: "",
   });
   const [submitted, setSubmitted] = useState(false);
 
+  const sendContactMutation = trpc.contact.send.useMutation({
+    onSuccess: () => {
+      setSubmitted(true);
+    },
+    onError: (error) => {
+      alert(error.message || "送信に失敗しました。もう一度お試しください。");
+    },
+  });
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: 実際の送信処理を実装
-    console.log("Contact form submitted:", formData);
-    setSubmitted(true);
+    sendContactMutation.mutate(formData);
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -171,9 +179,10 @@ export default function ContactPage() {
 
               <button
                 type="submit"
-                className="w-full bg-blue-600 text-white px-8 py-4 rounded-xl font-semibold hover:bg-blue-700 transition shadow-lg hover:shadow-xl"
+                disabled={sendContactMutation.isPending}
+                className="w-full bg-blue-600 text-white px-8 py-4 rounded-xl font-semibold hover:bg-blue-700 transition shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                送信する
+                {sendContactMutation.isPending ? "送信中..." : "送信する"}
               </button>
 
               <p className="text-xs text-gray-600 text-center">

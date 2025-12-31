@@ -426,3 +426,126 @@ ${APP_URL}
     text,
   });
 }
+
+/**
+ * お問い合わせメールを送信
+ */
+export async function sendContactEmail(
+  name: string,
+  email: string,
+  category: string,
+  message: string
+): Promise<boolean> {
+  const categoryLabels: { [key: string]: string } = {
+    general: "一般的な質問",
+    technical: "技術的な問題",
+    billing: "料金・請求について",
+    feature: "機能の要望",
+    other: "その他",
+  };
+
+  const categoryLabel = categoryLabels[category] || category;
+  const adminEmail = "okapee.masapiro@gmail.com";
+
+  const html = `
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>お問い合わせ - Books Fan</title>
+</head>
+<body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: #f5f5f5;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f5f5f5; padding: 40px 20px;">
+    <tr>
+      <td align="center">
+        <table width="600" cellpadding="0" cellspacing="0" style="background-color: #ffffff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+          <!-- ヘッダー -->
+          <tr>
+            <td style="padding: 40px 40px 20px; text-align: center; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 8px 8px 0 0;">
+              <h1 style="margin: 0; color: #ffffff; font-size: 28px; font-weight: bold;">📧 お問い合わせ</h1>
+            </td>
+          </tr>
+
+          <!-- メインコンテンツ -->
+          <tr>
+            <td style="padding: 40px;">
+              <h2 style="margin: 0 0 20px; font-size: 20px; color: #333333;">新しいお問い合わせが届きました</h2>
+
+              <div style="background-color: #f8f9fa; border-left: 4px solid #667eea; padding: 16px; margin: 20px 0;">
+                <p style="margin: 0 0 12px; font-size: 14px; color: #666666;">
+                  <strong>お名前:</strong>
+                </p>
+                <p style="margin: 0 0 20px; font-size: 16px; color: #333333;">
+                  ${name}
+                </p>
+
+                <p style="margin: 0 0 12px; font-size: 14px; color: #666666;">
+                  <strong>メールアドレス:</strong>
+                </p>
+                <p style="margin: 0 0 20px; font-size: 16px; color: #333333;">
+                  <a href="mailto:${email}" style="color: #667eea; text-decoration: none;">${email}</a>
+                </p>
+
+                <p style="margin: 0 0 12px; font-size: 14px; color: #666666;">
+                  <strong>お問い合わせ種別:</strong>
+                </p>
+                <p style="margin: 0 0 20px; font-size: 16px; color: #333333;">
+                  ${categoryLabel}
+                </p>
+
+                <p style="margin: 0 0 12px; font-size: 14px; color: #666666;">
+                  <strong>お問い合わせ内容:</strong>
+                </p>
+                <p style="margin: 0; font-size: 16px; color: #333333; line-height: 1.6; white-space: pre-line;">
+                  ${message}
+                </p>
+              </div>
+
+              <p style="margin: 20px 0 0; font-size: 14px; color: #999999;">
+                このメールは Books Fan のお問い合わせフォームから送信されました。
+              </p>
+            </td>
+          </tr>
+
+          <!-- フッター -->
+          <tr>
+            <td style="padding: 20px 40px; background-color: #f8f9fa; border-radius: 0 0 8px 8px; text-align: center;">
+              <p style="margin: 0; font-size: 12px; color: #999999;">
+                Books Fan<br>
+                <a href="${APP_URL}" style="color: #667eea; text-decoration: none;">${APP_URL}</a>
+              </p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
+  `;
+
+  const text = `
+【Books Fan】お問い合わせ
+
+新しいお問い合わせが届きました
+
+お名前: ${name}
+メールアドレス: ${email}
+お問い合わせ種別: ${categoryLabel}
+
+お問い合わせ内容:
+${message}
+
+---
+このメールは Books Fan のお問い合わせフォームから送信されました。
+${APP_URL}
+  `;
+
+  return sendEmail({
+    to: adminEmail,
+    subject: `【Books Fan】お問い合わせ - ${categoryLabel}`,
+    html,
+    text,
+  });
+}
