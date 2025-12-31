@@ -108,6 +108,10 @@ model User {
   sentNotifications     Notification[] @relation("NotificationSender")     // 送信した通知
   receivedNotifications Notification[] @relation("NotificationReceiver")   // 受信した通知
 
+  // 読書記録
+  readingStatuses ReadingStatus[]
+  readingSessions ReadingSession[]
+
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
@@ -173,6 +177,10 @@ model Book {
   reviews       Review[]
   aiSummaries   AISummary[]
   favoriteBooks FavoriteBook[]
+
+  // 読書記録
+  readingStatuses ReadingStatus[]
+  readingSessions ReadingSession[]
 
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
@@ -336,6 +344,13 @@ enum NotificationType {
   REVIEW_COMMENT  // レビューにコメントされた
 }
 
+// Enum: 読書ステータス
+enum ReadingStatusType {
+  WANT_TO_READ  // 読みたい
+  READING       // 読書中
+  COMPLETED     // 読了
+}
+
 // フォロー
 model Follow {
   id          String   @id @default(cuid())
@@ -375,4 +390,58 @@ model Notification {
   @@index([receiverId])
   @@index([isRead])
   @@index([createdAt])
+}
+
+// 読書ステータス
+model ReadingStatus {
+  id          String            @id @default(cuid())
+  userId      String
+  bookId      String
+  status      ReadingStatusType
+
+  // 読書進捗
+  startedAt   DateTime?  // 読書開始日時
+  completedAt DateTime?  // 読了日時
+
+  // リレーション
+  user        User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  book        Book              @relation(fields: [bookId], references: [id], onDelete: Cascade)
+  sessions    ReadingSession[]
+
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+
+  @@unique([userId, bookId])
+  @@index([userId])
+  @@index([bookId])
+  @@index([status])
+  @@index([userId, status])
+}
+
+// 読書セッション（ポモドーロ）
+model ReadingSession {
+  id              String        @id @default(cuid())
+  userId          String
+  bookId          String
+  readingStatusId String
+
+  // セッション詳細
+  startedAt       DateTime      // タイマー開始時刻
+  completedAt     DateTime?     // タイマー完了時刻
+  duration        Int           // 読書時間（秒単位）
+  isCompleted     Boolean       @default(false) // ポモドーロ完了フラグ
+
+  // リレーション
+  user            User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  book            Book          @relation(fields: [bookId], references: [id], onDelete: Cascade)
+  readingStatus   ReadingStatus @relation(fields: [readingStatusId], references: [id], onDelete: Cascade)
+
+  createdAt       DateTime      @default(now())
+
+  @@index([userId])
+  @@index([bookId])
+  @@index([readingStatusId])
+  @@index([userId, bookId])
+  @@index([createdAt])
+  @@index([userId, createdAt])
 }

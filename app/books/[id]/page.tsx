@@ -10,6 +10,7 @@ import { StructuredData } from "@/components/seo/StructuredData";
 import { generateWebsiteStructuredData } from "@/lib/seo";
 import { ShareButtons } from "@/components/social/ShareButtons";
 import { PurchaseButtons } from "@/components/book/PurchaseButtons";
+import { ReadingStatusToggle } from "@/components/reading/ReadingStatusToggle";
 
 export default function BookDetailPage() {
   const params = useParams();
@@ -254,27 +255,15 @@ export default function BookDetailPage() {
               <div className="flex flex-wrap gap-3 sm:gap-4">
                 {session ? (
                   <>
+                    {dbBookId && (
+                      <ReadingStatusToggle bookId={dbBookId} />
+                    )}
                     <Link
                       href={`/books/${bookId}/review`}
                       className="bg-primary text-white px-4 sm:px-6 py-2 sm:py-3 rounded-lg font-semibold hover:bg-primary-700 transition text-sm sm:text-base"
                     >
                       レビューを書く
                     </Link>
-                    <button
-                      onClick={handleFavoriteClick}
-                      disabled={
-                        addFavorite.isPending || removeFavorite.isPending
-                      }
-                      className={`border-2 px-4 sm:px-6 py-2 sm:py-3 rounded-lg font-semibold transition disabled:opacity-50 text-sm sm:text-base ${
-                        favoriteStatus?.isFavorite
-                          ? "bg-primary text-white border-primary hover:bg-primary-700"
-                          : "border-primary text-primary hover:bg-primary-50"
-                      }`}
-                    >
-                      {favoriteStatus?.isFavorite
-                        ? "❤️ お気に入り済み"
-                        : "🤍 お気に入りに追加"}
-                    </button>
                   </>
                 ) : (
                   <Link

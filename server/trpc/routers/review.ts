@@ -190,6 +190,26 @@ export const reviewRouter = router({
         },
       });
 
+      // 読書ステータスを自動更新（READINGの場合はCOMPLETEDに）
+      const readingStatus = await prisma.readingStatus.findUnique({
+        where: {
+          userId_bookId: {
+            userId,
+            bookId: bookData.id,
+          },
+        },
+      });
+
+      if (readingStatus && readingStatus.status === "READING") {
+        await prisma.readingStatus.update({
+          where: { id: readingStatus.id },
+          data: {
+            status: "COMPLETED",
+            completedAt: input.readCompletedDate || new Date(),
+          },
+        });
+      }
+
       // AI要約を生成（プレミアムユーザーのみ、かつフラグがtrueの場合）
       if (input.generateAISummary) {
         const user = await prisma.user.findUnique({
