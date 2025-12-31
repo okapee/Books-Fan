@@ -156,33 +156,33 @@ export default function BookDetailPage() {
     <div className="min-h-screen bg-gray-50 py-12">
       <div className="container mx-auto px-4 max-w-6xl">
         {/* Book Detail Card */}
-        <div className="bg-white rounded-xl shadow-lg p-8 mb-8">
-          <div className="flex flex-col md:flex-row gap-8">
+        <div className="bg-white rounded-xl shadow-lg p-4 sm:p-6 md:p-8 mb-8">
+          <div className="flex flex-col md:flex-row gap-6 md:gap-8">
             {/* Book Cover */}
-            <div className="flex-shrink-0">
+            <div className="flex-shrink-0 mx-auto md:mx-0">
               {book.coverImageUrl ? (
                 <img
                   src={book.coverImageUrl}
                   alt={book.title}
-                  className="w-48 h-72 rounded-lg shadow-md object-cover"
+                  className="w-40 h-60 sm:w-48 sm:h-72 rounded-lg shadow-md object-cover"
                 />
               ) : (
-                <div className="w-48 h-72 bg-gray-200 rounded-lg flex items-center justify-center">
-                  <span className="text-6xl">📚</span>
+                <div className="w-40 h-60 sm:w-48 sm:h-72 bg-gray-200 rounded-lg flex items-center justify-center">
+                  <span className="text-5xl sm:text-6xl">📚</span>
                 </div>
               )}
             </div>
 
             {/* Book Info */}
             <div className="flex-1">
-              <h1 className="text-3xl font-bold text-primary mb-3">
+              <h1 className="text-2xl sm:text-3xl font-bold text-primary mb-2 sm:mb-3">
                 {book.title}
               </h1>
 
-              <p className="text-xl text-gray-700 mb-4">{book.author}</p>
+              <p className="text-lg sm:text-xl text-gray-700 mb-4">{book.author}</p>
 
               {/* Meta Info */}
-              <div className="grid grid-cols-2 gap-4 mb-6 text-sm">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mb-6 text-sm">
                 {book.publisher && (
                   <div>
                     <span className="text-gray-600">出版社:</span>
@@ -229,12 +229,12 @@ export default function BookDetailPage() {
               )}
 
               {/* Action Buttons */}
-              <div className="flex gap-4">
+              <div className="flex flex-wrap gap-3 sm:gap-4">
                 {session ? (
                   <>
                     <Link
                       href={`/books/${bookId}/review`}
-                      className="bg-primary text-white px-6 py-3 rounded-lg font-semibold hover:bg-primary-700 transition"
+                      className="bg-primary text-white px-4 sm:px-6 py-2 sm:py-3 rounded-lg font-semibold hover:bg-primary-700 transition text-sm sm:text-base"
                     >
                       レビューを書く
                     </Link>
@@ -243,7 +243,7 @@ export default function BookDetailPage() {
                       disabled={
                         addFavorite.isPending || removeFavorite.isPending
                       }
-                      className={`border-2 px-6 py-3 rounded-lg font-semibold transition disabled:opacity-50 ${
+                      className={`border-2 px-4 sm:px-6 py-2 sm:py-3 rounded-lg font-semibold transition disabled:opacity-50 text-sm sm:text-base ${
                         favoriteStatus?.isFavorite
                           ? "bg-primary text-white border-primary hover:bg-primary-700"
                           : "border-primary text-primary hover:bg-primary-50"
@@ -257,7 +257,7 @@ export default function BookDetailPage() {
                 ) : (
                   <Link
                     href="/"
-                    className="bg-primary text-white px-6 py-3 rounded-lg font-semibold hover:bg-primary-700 transition"
+                    className="bg-primary text-white px-4 sm:px-6 py-2 sm:py-3 rounded-lg font-semibold hover:bg-primary-700 transition text-sm sm:text-base"
                   >
                     ログインしてレビューを書く
                   </Link>
@@ -281,20 +281,20 @@ export default function BookDetailPage() {
 
         {/* AI Summary Section */}
         {session && (
-          <div className="bg-white rounded-xl shadow-lg p-8 mb-8">
-            <div className="flex justify-between items-center mb-6">
-              <div>
-                <h2 className="text-2xl font-bold text-primary mb-2">
+          <div className="bg-white rounded-xl shadow-lg p-4 sm:p-6 md:p-8 mb-8">
+            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6">
+              <div className="flex-1">
+                <h2 className="text-xl sm:text-2xl font-bold text-primary mb-2">
                   AI要約
-                  <span className="ml-3 text-sm font-normal bg-accent text-primary px-3 py-1 rounded-full">
+                  <span className="ml-2 sm:ml-3 text-xs sm:text-sm font-normal bg-accent text-primary px-2 sm:px-3 py-1 rounded-full">
                     PREMIUM
                   </span>
                 </h2>
-                <p className="text-sm text-gray-600 mb-2">
+                <p className="text-xs sm:text-sm text-gray-600 mb-2">
                   この本の内容をAIが要約します。個別のレビューとは異なり、本全体の概要を把握できます。
                 </p>
                 {currentUser?.membershipType === "PREMIUM" && (
-                  <p className="text-sm text-gray-600">
+                  <p className="text-xs sm:text-sm text-gray-600">
                     今月の使用回数: {currentUser.aiUsageCount || 0} / 30回
                   </p>
                 )}
@@ -303,7 +303,7 @@ export default function BookDetailPage() {
                 <button
                   onClick={handleGenerateSummary}
                   disabled={isGeneratingSummary || (currentUser.aiUsageCount || 0) >= 30}
-                  className="bg-primary text-white px-6 py-3 rounded-lg font-semibold hover:bg-primary-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="bg-primary text-white px-4 sm:px-6 py-2 sm:py-3 rounded-lg font-semibold hover:bg-primary-700 transition disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base whitespace-nowrap"
                 >
                   {isGeneratingSummary ? "生成中..." : "AI要約を生成"}
                 </button>

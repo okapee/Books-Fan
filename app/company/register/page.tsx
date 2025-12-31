@@ -117,10 +117,10 @@ export default function CompanyRegisterPage() {
               />
             </div>
 
-            {/* スラッグ */}
+            {/* 企業ID */}
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-2">
-                スラッグ（企業識別ID） <span className="text-red-500">*</span>
+                企業ID <span className="text-red-500">*</span>
               </label>
               <input
                 type="text"
@@ -131,7 +131,7 @@ export default function CompanyRegisterPage() {
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent font-mono"
               />
               <p className="text-xs text-gray-500 mt-1">
-                小文字の英数字とハイフンのみ使用可能。URLに使用されます。
+                半角英数字とハイフン(-)のみ使用できます。企業ページのURLに使用されます。
               </p>
             </div>
 
@@ -154,26 +154,17 @@ export default function CompanyRegisterPage() {
               </p>
             </div>
 
-            {/* 最大ユーザー数 */}
+            {/* 最大ユーザー数（固定表示） */}
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-2">
                 最大ユーザー数
               </label>
-              <select
-                value={formData.maxUsers}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    maxUsers: parseInt(e.target.value),
-                  })
-                }
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
-              >
-                <option value={50}>50名</option>
-                <option value={100}>100名</option>
-                <option value={200}>200名</option>
-                <option value={500}>500名</option>
-              </select>
+              <div className="w-full px-4 py-3 border border-gray-200 bg-gray-50 rounded-lg text-gray-700">
+                100名まで
+              </div>
+              <p className="text-xs text-gray-500 mt-1">
+                最大100名まで企業メンバーを招待できます。
+              </p>
             </div>
 
             {/* 契約タイプ */}

@@ -71,67 +71,69 @@ export function RankingsTab() {
                 <Link
                   key={user.id}
                   href={`/profile/${user.id}`}
-                  className="flex items-center gap-4 p-6 hover:bg-gray-50 transition group"
+                  className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 p-4 sm:p-6 hover:bg-gray-50 transition group"
                 >
-                  {/* ランク */}
-                  <div className="flex-shrink-0 w-12 text-center">
-                    {index === 0 && (
-                      <span className="text-3xl">🥇</span>
-                    )}
-                    {index === 1 && (
-                      <span className="text-3xl">🥈</span>
-                    )}
-                    {index === 2 && (
-                      <span className="text-3xl">🥉</span>
-                    )}
-                    {index > 2 && (
-                      <span className="text-2xl font-bold text-gray-400">
-                        {index + 1}
-                      </span>
-                    )}
-                  </div>
-
-                  {/* ユーザー情報 */}
-                  <div className="flex items-center gap-4 flex-1 min-w-0">
-                    {/* アバター */}
-                    <div className="flex-shrink-0">
-                      {user.image ? (
-                        <img
-                          src={user.image}
-                          alt={user.name || "User"}
-                          className="w-12 h-12 rounded-full object-cover"
-                        />
-                      ) : (
-                        <div className="w-12 h-12 rounded-full bg-primary text-white flex items-center justify-center font-bold">
-                          {user.name?.[0]?.toUpperCase() || "?"}
-                        </div>
+                  <div className="flex items-center gap-3 sm:gap-4 flex-1 min-w-0">
+                    {/* ランク */}
+                    <div className="flex-shrink-0 w-10 sm:w-12 text-center">
+                      {index === 0 && (
+                        <span className="text-2xl sm:text-3xl">🥇</span>
+                      )}
+                      {index === 1 && (
+                        <span className="text-2xl sm:text-3xl">🥈</span>
+                      )}
+                      {index === 2 && (
+                        <span className="text-2xl sm:text-3xl">🥉</span>
+                      )}
+                      {index > 2 && (
+                        <span className="text-xl sm:text-2xl font-bold text-gray-400">
+                          {index + 1}
+                        </span>
                       )}
                     </div>
 
-                    {/* 名前とバイオ */}
-                    <div className="flex-1 min-w-0">
-                      <h3 className="font-semibold text-gray-900 group-hover:text-primary transition truncate">
-                        {user.name || "名前なし"}
-                      </h3>
-                      {user.bio && (
-                        <p className="text-sm text-gray-600 truncate">
-                          {user.bio}
-                        </p>
-                      )}
+                    {/* ユーザー情報 */}
+                    <div className="flex items-center gap-3 flex-1 min-w-0">
+                      {/* アバター */}
+                      <div className="flex-shrink-0">
+                        {user.image ? (
+                          <img
+                            src={user.image}
+                            alt={user.name || "User"}
+                            className="w-10 h-10 sm:w-12 sm:h-12 rounded-full object-cover"
+                          />
+                        ) : (
+                          <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-primary text-white flex items-center justify-center font-bold text-sm sm:text-base">
+                            {user.name?.[0]?.toUpperCase() || "?"}
+                          </div>
+                        )}
+                      </div>
+
+                      {/* 名前とバイオ */}
+                      <div className="flex-1 min-w-0">
+                        <h3 className="font-semibold text-sm sm:text-base text-gray-900 group-hover:text-primary transition truncate">
+                          {user.name || "名前なし"}
+                        </h3>
+                        {user.bio && (
+                          <p className="text-xs sm:text-sm text-gray-600 truncate">
+                            {user.bio}
+                          </p>
+                        )}
+                      </div>
                     </div>
                   </div>
 
                   {/* 統計とアクション */}
-                  <div className="flex gap-4 items-center">
-                    <div className="flex gap-6 text-center">
+                  <div className="flex gap-3 sm:gap-4 items-center justify-between sm:justify-start ml-13 sm:ml-0">
+                    <div className="flex gap-4 sm:gap-6 text-center">
                       <div>
-                        <div className="text-2xl font-bold text-primary">
+                        <div className="text-lg sm:text-2xl font-bold text-primary">
                           {user._count.reviews}
                         </div>
                         <div className="text-xs text-gray-600">レビュー</div>
                       </div>
                       <div>
-                        <div className="text-lg font-semibold text-gray-700">
+                        <div className="text-base sm:text-lg font-semibold text-gray-700">
                           {user._count.followers}
                         </div>
                         <div className="text-xs text-gray-600">フォロワー</div>
@@ -168,67 +170,69 @@ export function RankingsTab() {
                 <Link
                   key={user.id}
                   href={`/profile/${user.id}`}
-                  className="flex items-center gap-4 p-6 hover:bg-gray-50 transition group"
+                  className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 p-4 sm:p-6 hover:bg-gray-50 transition group"
                 >
-                  {/* ランク */}
-                  <div className="flex-shrink-0 w-12 text-center">
-                    {index === 0 && (
-                      <span className="text-3xl">🥇</span>
-                    )}
-                    {index === 1 && (
-                      <span className="text-3xl">🥈</span>
-                    )}
-                    {index === 2 && (
-                      <span className="text-3xl">🥉</span>
-                    )}
-                    {index > 2 && (
-                      <span className="text-2xl font-bold text-gray-400">
-                        {index + 1}
-                      </span>
-                    )}
-                  </div>
-
-                  {/* ユーザー情報 */}
-                  <div className="flex items-center gap-4 flex-1 min-w-0">
-                    {/* アバター */}
-                    <div className="flex-shrink-0">
-                      {user.image ? (
-                        <img
-                          src={user.image}
-                          alt={user.name || "User"}
-                          className="w-12 h-12 rounded-full object-cover"
-                        />
-                      ) : (
-                        <div className="w-12 h-12 rounded-full bg-primary text-white flex items-center justify-center font-bold">
-                          {user.name?.[0]?.toUpperCase() || "?"}
-                        </div>
+                  <div className="flex items-center gap-3 sm:gap-4 flex-1 min-w-0">
+                    {/* ランク */}
+                    <div className="flex-shrink-0 w-10 sm:w-12 text-center">
+                      {index === 0 && (
+                        <span className="text-2xl sm:text-3xl">🥇</span>
+                      )}
+                      {index === 1 && (
+                        <span className="text-2xl sm:text-3xl">🥈</span>
+                      )}
+                      {index === 2 && (
+                        <span className="text-2xl sm:text-3xl">🥉</span>
+                      )}
+                      {index > 2 && (
+                        <span className="text-xl sm:text-2xl font-bold text-gray-400">
+                          {index + 1}
+                        </span>
                       )}
                     </div>
 
-                    {/* 名前とバイオ */}
-                    <div className="flex-1 min-w-0">
-                      <h3 className="font-semibold text-gray-900 group-hover:text-primary transition truncate">
-                        {user.name || "名前なし"}
-                      </h3>
-                      {user.bio && (
-                        <p className="text-sm text-gray-600 truncate">
-                          {user.bio}
-                        </p>
-                      )}
+                    {/* ユーザー情報 */}
+                    <div className="flex items-center gap-3 flex-1 min-w-0">
+                      {/* アバター */}
+                      <div className="flex-shrink-0">
+                        {user.image ? (
+                          <img
+                            src={user.image}
+                            alt={user.name || "User"}
+                            className="w-10 h-10 sm:w-12 sm:h-12 rounded-full object-cover"
+                          />
+                        ) : (
+                          <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-primary text-white flex items-center justify-center font-bold text-sm sm:text-base">
+                            {user.name?.[0]?.toUpperCase() || "?"}
+                          </div>
+                        )}
+                      </div>
+
+                      {/* 名前とバイオ */}
+                      <div className="flex-1 min-w-0">
+                        <h3 className="font-semibold text-sm sm:text-base text-gray-900 group-hover:text-primary transition truncate">
+                          {user.name || "名前なし"}
+                        </h3>
+                        {user.bio && (
+                          <p className="text-xs sm:text-sm text-gray-600 truncate">
+                            {user.bio}
+                          </p>
+                        )}
+                      </div>
                     </div>
                   </div>
 
                   {/* 統計とアクション */}
-                  <div className="flex gap-4 items-center">
-                    <div className="flex gap-6 text-center">
+                  <div className="flex gap-3 sm:gap-4 items-center justify-between sm:justify-start ml-13 sm:ml-0">
+                    <div className="flex gap-4 sm:gap-6 text-center">
                       <div>
-                        <div className="text-2xl font-bold text-primary">
+                        <div className="text-lg sm:text-2xl font-bold text-primary">
                           {user._count.followers}
                         </div>
                         <div className="text-xs text-gray-600">フォロワー</div>
                       </div>
                       <div>
-                        <div className="text-lg font-semibold text-gray-700">
+                        <div className="text-base sm:text-lg font-semibold text-gray-700">
                           {user._count.reviews}
                         </div>
                         <div className="text-xs text-gray-600">レビュー</div>

@@ -4,6 +4,7 @@ import { useParams, useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { trpc } from "@/lib/trpc";
 import Link from "next/link";
+import { useEffect } from "react";
 import { FollowButton } from "@/components/user/FollowButton";
 import { UserStats } from "@/components/user/UserStats";
 
@@ -26,10 +27,11 @@ export default function UserProfilePage() {
   );
 
   // 自分のプロフィールの場合は /profile にリダイレクト
-  if (session?.user?.id === userId) {
-    router.push("/profile");
-    return null;
-  }
+  useEffect(() => {
+    if (session?.user?.id === userId) {
+      router.push("/profile");
+    }
+  }, [session?.user?.id, userId, router]);
 
   if (isLoading) {
     return (
@@ -77,43 +79,40 @@ export default function UserProfilePage() {
     <div className="min-h-screen bg-gray-50 py-12">
       <div className="container mx-auto px-4 max-w-6xl">
         {/* Profile Header */}
-        <div className="bg-white rounded-xl shadow-lg p-8 mb-8">
-          <div className="flex items-start gap-6">
+        <div className="bg-white rounded-xl shadow-lg p-4 sm:p-6 md:p-8 mb-8">
+          <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-6">
             {/* Profile Image */}
             <div className="relative flex-shrink-0">
               {user.image ? (
                 <img
                   src={user.image}
                   alt={user.name || "User"}
-                  className="w-32 h-32 rounded-full object-cover border-4 border-primary-200"
-                  onError={(e) => {
-                    e.currentTarget.style.display = 'none';
-                    const fallback = e.currentTarget.nextElementSibling as HTMLElement;
-                    if (fallback) fallback.style.display = 'flex';
-                  }}
+                  className="w-24 h-24 sm:w-28 sm:h-28 md:w-32 md:h-32 rounded-full object-cover border-4 border-primary-200"
                 />
-              ) : null}
-              <div
-                className="w-32 h-32 bg-primary text-white rounded-full flex items-center justify-center text-5xl font-bold"
-                style={{ display: user.image ? 'none' : 'flex' }}
-              >
-                {user.name?.[0]?.toUpperCase() || "U"}
-              </div>
+              ) : (
+                <div className="w-24 h-24 sm:w-28 sm:h-28 md:w-32 md:h-32 bg-primary text-white rounded-full flex items-center justify-center text-4xl sm:text-5xl font-bold">
+                  {user.name?.[0]?.toUpperCase() || "U"}
+                </div>
+              )}
             </div>
 
             {/* User Info */}
-            <div className="flex-1 min-w-0">
-              <div className="flex items-start justify-between mb-4">
-                <div>
-                  <h1 className="text-3xl font-bold text-primary mb-2">
+            <div className="flex-1 min-w-0 text-center sm:text-left w-full">
+              <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 sm:gap-4 mb-4">
+                <div className="flex-1">
+                  <h1 className="text-2xl sm:text-3xl font-bold text-primary mb-2">
                     {user.name || "匿名ユーザー"}
                   </h1>
-                  <p className="text-gray-500 text-sm">
+                  <p className="text-gray-500 text-xs sm:text-sm">
                     登録日: {new Date(user.createdAt).toLocaleDateString("ja-JP")}
                   </p>
                 </div>
                 {/* フォローボタン */}
-                {session && <FollowButton userId={userId} />}
+                {session && (
+                  <div className="flex justify-center sm:justify-start">
+                    <FollowButton userId={userId} />
+                  </div>
+                )}
               </div>
 
               {/* Bio */}
@@ -130,8 +129,8 @@ export default function UserProfilePage() {
         </div>
 
         {/* Recent Reviews */}
-        <div className="bg-white rounded-xl shadow-lg p-8">
-          <h2 className="text-2xl font-bold text-primary mb-6">
+        <div className="bg-white rounded-xl shadow-lg p-4 sm:p-6 md:p-8">
+          <h2 className="text-xl sm:text-2xl font-bold text-primary mb-4 sm:mb-6">
             最近のレビュー
           </h2>
 
@@ -151,24 +150,24 @@ export default function UserProfilePage() {
                 <Link
                   key={review.id}
                   href={`/books/${review.book.googleBooksId}`}
-                  className="block border border-gray-200 rounded-lg p-4 hover:shadow-md transition"
+                  className="block border border-gray-200 rounded-lg p-3 sm:p-4 hover:shadow-md transition"
                 >
-                  <div className="flex gap-4">
+                  <div className="flex gap-3 sm:gap-4">
                     {/* Book Cover */}
                     {review.book.coverImageUrl && (
                       <img
                         src={review.book.coverImageUrl}
                         alt={review.book.title}
-                        className="w-16 h-24 rounded object-cover flex-shrink-0"
+                        className="w-14 h-20 sm:w-16 sm:h-24 rounded object-cover flex-shrink-0"
                       />
                     )}
 
                     {/* Review Content */}
                     <div className="flex-1 min-w-0">
-                      <h3 className="font-bold text-lg text-gray-900 mb-1 line-clamp-1">
+                      <h3 className="font-bold text-base sm:text-lg text-gray-900 mb-1 line-clamp-1">
                         {review.book.title}
                       </h3>
-                      <p className="text-sm text-gray-600 mb-2">
+                      <p className="text-xs sm:text-sm text-gray-600 mb-2">
                         {review.book.author}
                       </p>
 

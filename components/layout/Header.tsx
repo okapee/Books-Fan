@@ -6,17 +6,16 @@ import Image from "next/image";
 import { NotificationBell } from "@/components/notifications/NotificationBell";
 
 export function Header() {
-  const { data: session, status } = useSession();
-  const isLoading = status === "loading";
+  const { data: session } = useSession();
 
   return (
     <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
-      <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between h-16">
+      <div className="container mx-auto px-2 sm:px-4">
+        <div className="flex items-center justify-between h-14 sm:h-16">
           {/* Logo */}
-          <Link href="/" className="flex items-center space-x-2">
-            <span className="text-2xl">📚</span>
-            <span className="font-serif text-xl font-bold text-primary">
+          <Link href="/" className="flex items-center space-x-1 sm:space-x-2">
+            <span className="text-xl sm:text-2xl">📚</span>
+            <span className="font-serif text-base sm:text-xl font-bold text-primary">
               Books Fan
             </span>
           </Link>
@@ -48,16 +47,14 @@ export function Header() {
           </nav>
 
           {/* Auth Buttons */}
-          <div className="flex items-center space-x-4">
-            {isLoading ? (
-              <div className="w-8 h-8 bg-gray-200 rounded-full animate-pulse" />
-            ) : session ? (
+          <div className="flex items-center space-x-2 sm:space-x-3 md:space-x-4">
+            {session ? (
               <>
                 {/* User Menu */}
-                <div className="flex items-center space-x-3">
+                <div className="flex items-center space-x-2 sm:space-x-3">
                   {/* Membership Badge */}
                   {session.user.membershipType === "PREMIUM" && (
-                    <span className="bg-accent text-primary text-xs font-semibold px-3 py-1 rounded-full">
+                    <span className="hidden sm:inline-block bg-accent text-primary text-xs font-semibold px-2 sm:px-3 py-1 rounded-full">
                       PREMIUM
                     </span>
                   )}
@@ -68,7 +65,7 @@ export function Header() {
                   {/* User Profile */}
                   <Link
                     href="/profile"
-                    className="flex items-center space-x-2 hover:opacity-80 transition"
+                    className="flex items-center space-x-1 sm:space-x-2 hover:opacity-80 transition"
                   >
                     {session.user.image ? (
                       <Image
@@ -76,10 +73,10 @@ export function Header() {
                         alt={session.user.name || "User"}
                         width={32}
                         height={32}
-                        className="rounded-full"
+                        className="rounded-full w-7 h-7 sm:w-8 sm:h-8"
                       />
                     ) : (
-                      <div className="w-8 h-8 bg-primary text-white rounded-full flex items-center justify-center">
+                      <div className="w-7 h-7 sm:w-8 sm:h-8 bg-primary text-white rounded-full flex items-center justify-center text-xs sm:text-sm">
                         {session.user.name?.charAt(0) || "U"}
                       </div>
                     )}
@@ -91,19 +88,19 @@ export function Header() {
                   {/* Sign Out Button */}
                   <button
                     onClick={() => signOut()}
-                    className="text-sm text-gray-600 hover:text-gray-800 transition"
+                    className="text-xs sm:text-sm text-gray-600 hover:text-gray-800 transition hidden sm:block"
                   >
                     ログアウト
                   </button>
                 </div>
               </>
             ) : (
-              <div className="flex items-center space-x-2">
+              <div className="flex items-center space-x-1 sm:space-x-2">
                 <button
                   onClick={() => signIn("google")}
-                  className="bg-primary text-white px-4 py-2 rounded-lg font-semibold hover:bg-primary-700 transition flex items-center space-x-2"
+                  className="bg-primary text-white px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 rounded-lg font-semibold hover:bg-primary-700 transition flex items-center space-x-1 sm:space-x-2 text-sm sm:text-base"
                 >
-                  <svg className="w-5 h-5" viewBox="0 0 24 24">
+                  <svg className="w-4 h-4 sm:w-5 sm:h-5" viewBox="0 0 24 24">
                     <path
                       fill="currentColor"
                       d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
@@ -125,9 +122,9 @@ export function Header() {
                 </button>
                 <button
                   onClick={() => signIn("line")}
-                  className="bg-[#06C755] text-white px-4 py-2 rounded-lg font-semibold hover:bg-[#05b34c] transition flex items-center space-x-2"
+                  className="bg-[#06C755] text-white px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 rounded-lg font-semibold hover:bg-[#05b34c] transition flex items-center space-x-1 sm:space-x-2 text-sm sm:text-base"
                 >
-                  <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                  <svg className="w-4 h-4 sm:w-5 sm:h-5" viewBox="0 0 24 24" fill="currentColor">
                     <path d="M19.365 9.863c.349 0 .63.285.63.631 0 .345-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .344-.281.629-.63.629h-2.386c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63h2.386c.346 0 .627.285.627.63 0 .349-.281.63-.63.63H17.61v1.125h1.755zm-3.855 3.016c0 .27-.174.51-.432.596-.064.021-.133.031-.199.031-.211 0-.391-.09-.51-.25l-2.443-3.317v2.94c0 .344-.279.629-.631.629-.346 0-.626-.285-.626-.629V8.108c0-.27.173-.51.43-.595.06-.023.136-.033.194-.033.195 0 .375.105.495.254l2.462 3.33V8.108c0-.345.282-.63.63-.63.345 0 .63.285.63.63v4.771zm-5.741 0c0 .344-.282.629-.631.629-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63.346 0 .628.285.628.63v4.771zm-2.466.629H4.917c-.345 0-.63-.285-.63-.629V8.108c0-.345.285-.63.63-.63.348 0 .63.285.63.63v4.141h1.756c.348 0 .629.283.629.63 0 .344-.282.629-.629.629M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314"/>
                   </svg>
                   <span className="hidden sm:inline">LINE</span>

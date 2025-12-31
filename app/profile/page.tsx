@@ -45,77 +45,77 @@ export default async function ProfilePage() {
     <div className="min-h-screen bg-gray-50 py-12">
       <div className="container mx-auto px-4 max-w-6xl">
         {/* Profile Header */}
-        <div className="bg-white rounded-xl shadow-lg p-8 mb-8">
-          <div className="flex items-start gap-6">
+        <div className="bg-white rounded-xl shadow-lg p-4 sm:p-6 md:p-8 mb-8">
+          <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-6">
             {/* Profile Image */}
-            <div className="relative">
+            <div className="relative flex-shrink-0">
               {user.image ? (
                 <Image
                   src={user.image}
                   alt={user.name || "User"}
-                  width={120}
-                  height={120}
-                  className="rounded-full"
+                  width={96}
+                  height={96}
+                  className="rounded-full sm:w-28 sm:h-28 md:w-[120px] md:h-[120px]"
                 />
               ) : (
-                <div className="w-30 h-30 bg-primary text-white rounded-full flex items-center justify-center text-4xl">
+                <div className="w-24 h-24 sm:w-28 sm:h-28 md:w-30 md:h-30 bg-primary text-white rounded-full flex items-center justify-center text-3xl sm:text-4xl">
                   {user.name?.charAt(0) || "U"}
                 </div>
               )}
               {user.membershipType === "PREMIUM" && (
-                <div className="absolute -bottom-2 -right-2 bg-accent text-primary text-xs font-bold px-3 py-1 rounded-full">
+                <div className="absolute -bottom-2 -right-2 bg-accent text-primary text-xs font-bold px-2 sm:px-3 py-1 rounded-full">
                   PREMIUM
                 </div>
               )}
             </div>
 
             {/* User Info */}
-            <div className="flex-1">
-              <h1 className="text-3xl font-bold text-primary mb-2">
+            <div className="flex-1 text-center sm:text-left">
+              <h1 className="text-2xl sm:text-3xl font-bold text-primary mb-2">
                 {user.name}
               </h1>
-              <p className="text-gray-600 mb-4">{user.email}</p>
+              <p className="text-sm sm:text-base text-gray-600 mb-4">{user.email}</p>
               {user.bio && (
-                <p className="text-gray-700 mb-4">{user.bio}</p>
+                <p className="text-sm sm:text-base text-gray-700 mb-4">{user.bio}</p>
               )}
 
               {/* Stats */}
-              <div className="flex gap-6 mt-4">
+              <div className="flex justify-center sm:justify-start gap-4 sm:gap-6 mt-4">
                 <div>
-                  <div className="text-2xl font-bold text-primary">
+                  <div className="text-xl sm:text-2xl font-bold text-primary">
                     {user._count.reviews}
                   </div>
-                  <div className="text-sm text-gray-600">レビュー</div>
+                  <div className="text-xs sm:text-sm text-gray-600">レビュー</div>
                 </div>
                 <div>
-                  <div className="text-2xl font-bold text-primary">
+                  <div className="text-xl sm:text-2xl font-bold text-primary">
                     {user._count.aiSummaries}
                   </div>
-                  <div className="text-sm text-gray-600">AI要点</div>
+                  <div className="text-xs sm:text-sm text-gray-600">AI要点</div>
                 </div>
                 <div>
-                  <div className="text-2xl font-bold text-primary">
+                  <div className="text-xl sm:text-2xl font-bold text-primary">
                     {user._count.favoriteBooks}
                   </div>
-                  <div className="text-sm text-gray-600">お気に入り</div>
+                  <div className="text-xs sm:text-sm text-gray-600">お気に入り</div>
                 </div>
               </div>
             </div>
 
             {/* Action Buttons */}
-            <div className="flex flex-col gap-2">
+            <div className="flex sm:flex-col gap-2 w-full sm:w-auto">
               <Link
                 href="/profile/edit"
-                className="bg-primary text-white px-6 py-2 rounded-lg hover:bg-primary-700 transition text-center"
+                className="flex-1 sm:flex-none bg-primary text-white px-4 sm:px-6 py-2 rounded-lg hover:bg-primary-700 transition text-center text-sm sm:text-base whitespace-nowrap"
               >
                 プロフィール編集
               </Link>
               {user._count.reviews > 0 && (
                 <Link
                   href="/profile/mindmap"
-                  className="bg-purple-600 text-white px-6 py-2 rounded-lg hover:bg-purple-700 transition text-center flex items-center justify-center gap-2"
+                  className="flex-1 sm:flex-none bg-purple-600 text-white px-4 sm:px-6 py-2 rounded-lg hover:bg-purple-700 transition text-center flex items-center justify-center gap-2 text-sm sm:text-base whitespace-nowrap"
                 >
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
                   </svg>
                   マインドマップ
@@ -126,10 +126,10 @@ export default async function ProfilePage() {
         </div>
 
         {/* Membership Info */}
-        <div className="grid md:grid-cols-2 gap-8 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 md:gap-8 mb-8">
           {/* Membership Card */}
-          <div className="bg-white rounded-xl shadow-lg p-6">
-            <h2 className="text-xl font-bold text-primary mb-4">
+          <div className="bg-white rounded-xl shadow-lg p-4 sm:p-6">
+            <h2 className="text-lg sm:text-xl font-bold text-primary mb-4">
               会員プラン
             </h2>
             <div className="space-y-4">
@@ -178,8 +178,8 @@ export default async function ProfilePage() {
           </div>
 
           {/* AI Usage Card */}
-          <div className="bg-white rounded-xl shadow-lg p-6">
-            <h2 className="text-xl font-bold text-primary mb-4">
+          <div className="bg-white rounded-xl shadow-lg p-4 sm:p-6">
+            <h2 className="text-lg sm:text-xl font-bold text-primary mb-4">
               AI使用状況
             </h2>
             <div className="space-y-4">

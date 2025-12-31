@@ -113,7 +113,7 @@ export function FollowButton({
       <button
         onClick={handleClick}
         disabled={isLoading}
-        className={`px-4 py-1.5 rounded-lg text-sm font-medium transition disabled:opacity-50 ${
+        className={`px-3 sm:px-4 py-1 sm:py-1.5 rounded-lg text-xs sm:text-sm font-medium transition disabled:opacity-50 whitespace-nowrap ${
           isFollowing
             ? "bg-gray-100 text-gray-700 border border-gray-300 hover:bg-gray-200"
             : "bg-blue-600 text-white hover:bg-blue-700"
@@ -129,7 +129,7 @@ export function FollowButton({
     <button
       onClick={handleClick}
       disabled={isLoading}
-      className={`px-6 py-2.5 rounded-lg font-semibold transition disabled:opacity-50 ${
+      className={`px-4 sm:px-6 py-2 sm:py-2.5 rounded-lg text-sm sm:text-base font-semibold transition disabled:opacity-50 ${
         isFollowing
           ? "bg-white text-gray-700 border-2 border-gray-300 hover:bg-gray-50"
           : "bg-blue-600 text-white border-2 border-blue-600 hover:bg-blue-700"

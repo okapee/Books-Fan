@@ -133,66 +133,60 @@ export function ReviewList({
       {reviews.map((review) => (
         <div
           key={review.id}
-          className="border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow"
+          className="border border-gray-200 rounded-lg p-3 sm:p-4 md:p-6 hover:shadow-md transition-shadow"
         >
           {/* User Info */}
-          <div className="flex items-start gap-4 mb-4">
-            <div className="flex-shrink-0">
-              {review.user.image ? (
-                <img
-                  src={review.user.image}
-                  alt={review.user.name || "User"}
-                  className="w-12 h-12 rounded-full object-cover border-2 border-gray-200"
-                  onError={(e) => {
-                    // 画像読み込みエラー時はイニシャルアバターを表示
-                    e.currentTarget.style.display = 'none';
-                    const fallback = e.currentTarget.nextElementSibling as HTMLElement;
-                    if (fallback) fallback.style.display = 'flex';
-                  }}
-                />
-              ) : null}
-              <div
-                className="w-12 h-12 bg-primary-200 rounded-full flex items-center justify-center"
-                style={{ display: review.user.image ? 'none' : 'flex' }}
-              >
-                <span className="text-primary font-semibold text-lg">
-                  {review.user.name?.[0]?.toUpperCase() || "U"}
-                </span>
-              </div>
-            </div>
-
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-3 mb-1">
-                <p className="font-semibold text-gray-900">
-                  {review.user.name || "匿名ユーザー"}
-                </p>
-                {session?.user?.id !== review.userId && (
-                  <FollowButton userId={review.userId} className="text-sm px-4 py-1" />
+          <div className="flex flex-col sm:flex-row sm:items-start gap-3 sm:gap-4 mb-4">
+            <div className="flex items-start gap-3 sm:gap-4 flex-1 min-w-0">
+              <div className="flex-shrink-0">
+                {review.user.image ? (
+                  <img
+                    src={review.user.image}
+                    alt={review.user.name || "User"}
+                    className="w-10 h-10 sm:w-12 sm:h-12 rounded-full object-cover border-2 border-gray-200"
+                  />
+                ) : (
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 bg-primary-200 rounded-full flex items-center justify-center">
+                    <span className="text-primary font-semibold text-base sm:text-lg">
+                      {review.user.name?.[0]?.toUpperCase() || "U"}
+                    </span>
+                  </div>
                 )}
               </div>
-              <div className="flex items-center gap-3 mt-1">
-                {/* Star Rating */}
-                <div className="flex">
-                  {[...Array(5)].map((_, i) => (
-                    <span
-                      key={i}
-                      className={
-                        i < review.rating ? "text-accent" : "text-gray-300"
-                      }
-                    >
-                      ★
-                    </span>
-                  ))}
+
+              <div className="flex-1 min-w-0">
+                <div className="flex flex-wrap items-center gap-2 mb-1">
+                  <p className="font-semibold text-sm sm:text-base text-gray-900">
+                    {review.user.name || "匿名ユーザー"}
+                  </p>
+                  {session?.user?.id !== review.userId && (
+                    <FollowButton userId={review.userId} variant="compact" />
+                  )}
                 </div>
-                <span className="text-sm text-gray-500">
-                  {review.rating}.0
-                </span>
+                <div className="flex items-center gap-2 sm:gap-3 mt-1">
+                  {/* Star Rating */}
+                  <div className="flex text-sm sm:text-base">
+                    {[...Array(5)].map((_, i) => (
+                      <span
+                        key={i}
+                        className={
+                          i < review.rating ? "text-accent" : "text-gray-300"
+                        }
+                      >
+                        ★
+                      </span>
+                    ))}
+                  </div>
+                  <span className="text-xs sm:text-sm text-gray-500">
+                    {review.rating}.0
+                  </span>
+                </div>
               </div>
             </div>
 
-            <div className="flex flex-col items-end gap-2">
+            <div className="flex sm:flex-col items-center sm:items-end justify-between sm:justify-start gap-2 ml-13 sm:ml-0">
               {/* Date */}
-              <div className="text-sm text-gray-500">
+              <div className="text-xs sm:text-sm text-gray-500">
                 {new Date(review.createdAt).toLocaleDateString("ja-JP", {
                   year: "numeric",
                   month: "long",
@@ -205,14 +199,14 @@ export function ReviewList({
                 <div className="flex gap-2">
                   <Link
                     href={`/books/${googleBooksId}/review/${review.id}`}
-                    className="text-sm text-primary hover:underline"
+                    className="text-xs sm:text-sm text-primary hover:underline whitespace-nowrap"
                   >
                     編集
                   </Link>
                   <button
                     onClick={() => handleDelete(review.id)}
                     disabled={deletingId === review.id}
-                    className="text-sm text-red-600 hover:underline disabled:opacity-50"
+                    className="text-xs sm:text-sm text-red-600 hover:underline disabled:opacity-50 whitespace-nowrap"
                   >
                     {deletingId === review.id ? "削除中..." : "削除"}
                   </button>
@@ -222,7 +216,7 @@ export function ReviewList({
           </div>
 
           {/* Review Content */}
-          <p className="text-gray-700 leading-relaxed whitespace-pre-line mb-3">
+          <p className="text-sm sm:text-base text-gray-700 leading-relaxed whitespace-pre-line mb-3">
             {review.content}
           </p>
 
@@ -309,19 +303,19 @@ function ReviewActions({
   const commentCount = comments?.length || 0;
 
   return (
-    <div className="flex items-center gap-6 mt-4 pt-4 border-t border-gray-100">
+    <div className="flex items-center gap-3 sm:gap-6 mt-3 sm:mt-4 pt-3 sm:pt-4 border-t border-gray-100">
       {/* Like Button */}
       <button
         onClick={() => onLikeToggle(reviewId, isLiked)}
         disabled={isLiking}
-        className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition disabled:opacity-50 ${
+        className={`flex items-center gap-1 sm:gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg text-sm sm:text-base font-medium transition disabled:opacity-50 ${
           isLiked
             ? "bg-red-50 text-red-600 hover:bg-red-100"
             : "bg-gray-50 text-gray-700 hover:bg-gray-100"
         }`}
       >
-        <span className="text-lg">{isLiked ? "❤️" : "🤍"}</span>
-        <span className="text-sm">
+        <span className="text-base sm:text-lg">{isLiked ? "❤️" : "🤍"}</span>
+        <span className="text-xs sm:text-sm">
           {isLiking ? "..." : likeCount || 0}
         </span>
       </button>
@@ -330,10 +324,10 @@ function ReviewActions({
       {googleBooksId && (
         <Link
           href={`/books/${googleBooksId}/review/${reviewId}`}
-          className="flex items-center gap-2 px-4 py-2 rounded-lg font-medium bg-gray-50 text-gray-700 hover:bg-gray-100 transition"
+          className="flex items-center gap-1 sm:gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg text-sm sm:text-base font-medium bg-gray-50 text-gray-700 hover:bg-gray-100 transition"
         >
-          <span className="text-lg">💬</span>
-          <span className="text-sm">{commentCount}</span>
+          <span className="text-base sm:text-lg">💬</span>
+          <span className="text-xs sm:text-sm">{commentCount}</span>
         </Link>
       )}
     </div>
