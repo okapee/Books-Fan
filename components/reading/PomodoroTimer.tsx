@@ -122,32 +122,38 @@ export function PomodoroTimer({
       </div>
 
       {/* タイマー表示 */}
-      <div className="relative mb-8">
-        <svg className="w-40 h-40 sm:w-48 sm:h-48 mx-auto transform -rotate-90">
-          <circle
-            cx="96"
-            cy="96"
-            r="88"
-            stroke="#e5e7eb"
-            strokeWidth="12"
-            fill="none"
-          />
-          <circle
-            cx="96"
-            cy="96"
-            r="88"
-            stroke={phase === "work" ? "#3b82f6" : "#10b981"}
-            strokeWidth="12"
-            fill="none"
-            strokeDasharray={`${2 * Math.PI * 88}`}
-            strokeDashoffset={`${2 * Math.PI * 88 * (1 - progress / 100)}`}
-            strokeLinecap="round"
-            className="transition-all duration-1000"
-          />
-        </svg>
-        <div className="absolute inset-0 flex items-center justify-center">
-          <div className="text-4xl sm:text-5xl font-bold text-gray-900">
-            {formatTime(timeLeft)}
+      <div className="relative mb-8 flex justify-center">
+        <div className="relative w-48 h-48 sm:w-56 sm:h-56">
+          <svg
+            className="w-full h-full transform -rotate-90"
+            viewBox="0 0 200 200"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <circle
+              cx="100"
+              cy="100"
+              r="90"
+              stroke="#e5e7eb"
+              strokeWidth="12"
+              fill="none"
+            />
+            <circle
+              cx="100"
+              cy="100"
+              r="90"
+              stroke={phase === "work" ? "#3b82f6" : "#10b981"}
+              strokeWidth="12"
+              fill="none"
+              strokeDasharray={`${2 * Math.PI * 90}`}
+              strokeDashoffset={`${2 * Math.PI * 90 * (1 - progress / 100)}`}
+              strokeLinecap="round"
+              className="transition-all duration-1000"
+            />
+          </svg>
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="text-4xl sm:text-5xl font-bold text-gray-900">
+              {formatTime(timeLeft)}
+            </div>
           </div>
         </div>
       </div>
