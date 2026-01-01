@@ -32,7 +32,11 @@ export function OnboardingTutorial({ isOpen, onComplete }: OnboardingTutorialPro
               </li>
               <li className="flex items-center gap-2">
                 <span className="text-blue-600">✓</span>
-                お気に入り登録
+                読書管理（読みたい・読書中・読了）
+              </li>
+              <li className="flex items-center gap-2">
+                <span className="text-blue-600">✓</span>
+                ポモドーロタイマーで読書記録
               </li>
               <li className="flex items-center gap-2">
                 <span className="text-blue-600">✓</span>
@@ -40,7 +44,7 @@ export function OnboardingTutorial({ isOpen, onComplete }: OnboardingTutorialPro
               </li>
               <li className="flex items-center gap-2">
                 <span className="text-blue-600">✓</span>
-                AI要約（プレミアム）
+                AI要約・マインドマップ（プレミアム）
               </li>
             </ul>
           </div>
@@ -72,6 +76,52 @@ export function OnboardingTutorial({ isOpen, onComplete }: OnboardingTutorialPro
           <p className="text-gray-600 text-sm">
             💡 ヒント: レビューは30文字以上で投稿できます
           </p>
+        </div>
+      ),
+    },
+    {
+      title: "読書を管理・記録する",
+      description: "ポモドーロタイマーで読書習慣を身につけよう",
+      icon: "📖",
+      content: (
+        <div className="space-y-4">
+          <div className="grid md:grid-cols-3 gap-4">
+            <div className="bg-blue-50 rounded-lg p-4 border border-blue-200">
+              <div className="text-3xl mb-2">📚</div>
+              <h4 className="font-semibold text-blue-900 mb-2">読みたい</h4>
+              <p className="text-sm text-blue-800">
+                気になる本をリストに追加
+              </p>
+            </div>
+            <div className="bg-green-50 rounded-lg p-4 border border-green-200">
+              <div className="text-3xl mb-2">📖</div>
+              <h4 className="font-semibold text-green-900 mb-2">読書中</h4>
+              <p className="text-sm text-green-800">
+                今読んでいる本を管理
+              </p>
+            </div>
+            <div className="bg-purple-50 rounded-lg p-4 border border-purple-200">
+              <div className="text-3xl mb-2">✅</div>
+              <h4 className="font-semibold text-purple-900 mb-2">読了</h4>
+              <p className="text-sm text-purple-800">
+                読み終えた本を記録
+              </p>
+            </div>
+          </div>
+          <div className="bg-gradient-to-r from-orange-50 to-yellow-50 rounded-lg p-6 border border-orange-200">
+            <div className="flex items-center gap-4 mb-3">
+              <div className="text-4xl">⏱️</div>
+              <div>
+                <h4 className="font-bold text-lg text-orange-900">ポモドーロタイマー</h4>
+                <p className="text-sm text-orange-700">
+                  25分集中 + 5分休憩で効率的な読書
+                </p>
+              </div>
+            </div>
+            <p className="text-sm text-gray-600">
+              読書セッションを自動記録し、継続日数や総読書時間を確認できます
+            </p>
+          </div>
         </div>
       ),
     },
@@ -140,21 +190,21 @@ export function OnboardingTutorial({ isOpen, onComplete }: OnboardingTutorialPro
             <Link
               href="/books"
               onClick={onComplete}
-              className="bg-blue-600 text-white px-6 py-4 rounded-xl font-semibold hover:bg-blue-700 transition"
+              className="bg-blue-600 text-white px-6 py-4 rounded-xl font-semibold hover:bg-blue-700 transition text-center"
             >
               📖 本を探す
             </Link>
             <Link
-              href="/books?tab=popular"
+              href="/reading"
               onClick={onComplete}
-              className="bg-purple-600 text-white px-6 py-4 rounded-xl font-semibold hover:bg-purple-700 transition"
+              className="bg-green-600 text-white px-6 py-4 rounded-xl font-semibold hover:bg-green-700 transition text-center"
             >
-              🔥 人気の本
+              📚 読書管理
             </Link>
             <Link
               href="/upgrade"
               onClick={onComplete}
-              className="bg-gradient-to-r from-yellow-400 to-orange-400 text-gray-900 px-6 py-4 rounded-xl font-semibold hover:shadow-lg transition"
+              className="bg-gradient-to-r from-yellow-400 to-orange-400 text-gray-900 px-6 py-4 rounded-xl font-semibold hover:shadow-lg transition text-center"
             >
               ⭐ プレミアム
             </Link>

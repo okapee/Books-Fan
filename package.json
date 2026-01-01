@@ -9,7 +9,10 @@
     "lint": "next lint",
     "db:push": "prisma db push",
     "db:studio": "prisma studio",
-    "db:generate": "prisma generate"
+    "db:generate": "prisma generate",
+    "test:corporate": "node scripts/setup-corporate-test.js",
+    "test:reset": "node scripts/reset-corporate-test.js",
+    "test:check": "node scripts/check-user-status.js"
   },
   "dependencies": {
     "@next-auth/prisma-adapter": "^1.0.7",

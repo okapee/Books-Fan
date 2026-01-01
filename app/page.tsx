@@ -69,13 +69,148 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Reading Journey Section */}
+      <section className="bg-gradient-to-b from-white to-blue-50 py-20">
+        <div className="container mx-auto px-4">
+          <h2 className="text-4xl md:text-5xl font-bold text-center bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-4">
+            読書の旅を、完全サポート
+          </h2>
+          <p className="text-center text-gray-600 mb-16 max-w-2xl mx-auto text-lg">
+            本と出会い、読書を管理し、知識を整理する。<br />
+            あなたの読書ライフを一貫してサポートします。
+          </p>
+
+          <div className="max-w-6xl mx-auto">
+            {/* Journey Steps */}
+            <div className="grid md:grid-cols-3 gap-8 mb-12">
+              {/* Step 1: Discover */}
+              <div className="relative">
+                <div className="bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all border-2 border-blue-200 h-full">
+                  <div className="absolute -top-4 -left-4 w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center text-white font-bold text-xl shadow-lg">
+                    1
+                  </div>
+                  <div className="w-20 h-20 bg-gradient-to-br from-blue-100 to-blue-200 rounded-2xl flex items-center justify-center mb-6 mx-auto">
+                    <span className="text-4xl">📚</span>
+                  </div>
+                  <h3 className="text-2xl font-bold text-gray-800 mb-4 text-center">
+                    本と出会う
+                  </h3>
+                  <p className="text-gray-600 leading-relaxed text-center mb-4">
+                    AIパーソナル推薦で、あなたにぴったりの本を発見。
+                  </p>
+                  <ul className="space-y-2 text-sm text-gray-600">
+                    <li className="flex items-start gap-2">
+                      <span className="text-blue-500 mt-1">✓</span>
+                      <span>フォローユーザーの人気本</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="text-blue-500 mt-1">✓</span>
+                      <span>カテゴリー別ランキング</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="text-blue-500 mt-1">✓</span>
+                      <span>AI推薦システム</span>
+                    </li>
+                  </ul>
+                </div>
+                {/* Arrow */}
+                <div className="hidden md:block absolute top-1/2 -right-4 transform -translate-y-1/2 text-blue-300 text-4xl">
+                  →
+                </div>
+              </div>
+
+              {/* Step 2: Manage */}
+              <div className="relative">
+                <div className="bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all border-2 border-green-200 h-full">
+                  <div className="absolute -top-4 -left-4 w-12 h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-full flex items-center justify-center text-white font-bold text-xl shadow-lg">
+                    2
+                  </div>
+                  <div className="w-20 h-20 bg-gradient-to-br from-green-100 to-green-200 rounded-2xl flex items-center justify-center mb-6 mx-auto">
+                    <span className="text-4xl">⏱️</span>
+                  </div>
+                  <h3 className="text-2xl font-bold text-gray-800 mb-4 text-center">
+                    読書を管理
+                  </h3>
+                  <p className="text-gray-600 leading-relaxed text-center mb-4">
+                    ポモドーロタイマーで、読書時間を可視化。
+                  </p>
+                  <ul className="space-y-2 text-sm text-gray-600">
+                    <li className="flex items-start gap-2">
+                      <span className="text-green-500 mt-1">✓</span>
+                      <span>25分集中タイマー</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="text-green-500 mt-1">✓</span>
+                      <span>読書時間の自動記録</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="text-green-500 mt-1">✓</span>
+                      <span>3つのステータス管理</span>
+                    </li>
+                  </ul>
+                </div>
+                {/* Arrow */}
+                <div className="hidden md:block absolute top-1/2 -right-4 transform -translate-y-1/2 text-green-300 text-4xl">
+                  →
+                </div>
+              </div>
+
+              {/* Step 3: Organize */}
+              <div className="relative">
+                <div className="bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all border-2 border-purple-200 h-full">
+                  <div className="absolute -top-4 -left-4 w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-xl shadow-lg">
+                    3
+                  </div>
+                  <div className="w-20 h-20 bg-gradient-to-br from-purple-100 to-purple-200 rounded-2xl flex items-center justify-center mb-6 mx-auto">
+                    <span className="text-4xl">🧠</span>
+                  </div>
+                  <h3 className="text-2xl font-bold text-gray-800 mb-4 text-center">
+                    知識を整理
+                  </h3>
+                  <p className="text-gray-600 leading-relaxed text-center mb-4">
+                    AIとマインドマップで、学びを可視化。
+                  </p>
+                  <ul className="space-y-2 text-sm text-gray-600">
+                    <li className="flex items-start gap-2">
+                      <span className="text-purple-500 mt-1">✓</span>
+                      <span>AI要約生成</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="text-purple-500 mt-1">✓</span>
+                      <span>マインドマップ自動作成</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="text-purple-500 mt-1">✓</span>
+                      <span>レビュー共有</span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            {/* CTA */}
+            <div className="text-center">
+              <p className="text-lg text-gray-700 mb-6">
+                <span className="font-bold text-blue-600">完全無料</span>で始められます
+              </p>
+              <Link
+                href="#cta"
+                className="inline-block bg-gradient-to-r from-blue-600 to-purple-600 text-white px-10 py-4 rounded-xl font-bold hover:shadow-xl transition transform hover:-translate-y-0.5 text-lg"
+              >
+                今すぐ登録して始める →
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Features Section */}
       <section id="features" className="container mx-auto px-4 py-20">
-        <h2 className="text-4xl md:text-5xl font-bold text-center bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-4">
-          主な機能
+        <h2 className="text-3xl md:text-4xl font-bold text-center text-gray-800 mb-4">
+          充実の機能
         </h2>
         <p className="text-center text-gray-600 mb-16 max-w-2xl mx-auto">
-          読書をもっと楽しく、もっと深く。Books Fanがあなたの読書ライフをサポートします。
+          読書をもっと楽しく、もっと深く。
         </p>
         <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
           <div className="bg-white p-8 rounded-2xl shadow-md hover:shadow-xl transition-shadow border border-gray-100">
@@ -111,6 +246,42 @@ export default function Home() {
             </h3>
             <p className="text-gray-600 leading-relaxed">
               あなたの読書傾向を分析し、次に読むべき一冊を提案します。
+            </p>
+          </div>
+
+          <div className="bg-white p-8 rounded-2xl shadow-md hover:shadow-xl transition-shadow border border-gray-100">
+            <div className="w-16 h-16 bg-gradient-to-br from-green-100 to-green-200 rounded-2xl flex items-center justify-center mb-6">
+              <span className="text-3xl">🗺️</span>
+            </div>
+            <h3 className="text-2xl font-bold text-gray-800 mb-4">
+              マインドマップ
+            </h3>
+            <p className="text-gray-600 leading-relaxed">
+              レビューから自動生成されるマインドマップで、読書の全体像を把握できます。
+            </p>
+          </div>
+
+          <div className="bg-white p-8 rounded-2xl shadow-md hover:shadow-xl transition-shadow border border-gray-100">
+            <div className="w-16 h-16 bg-gradient-to-br from-orange-100 to-orange-200 rounded-2xl flex items-center justify-center mb-6">
+              <span className="text-3xl">⏲️</span>
+            </div>
+            <h3 className="text-2xl font-bold text-gray-800 mb-4">
+              ポモドーロタイマー
+            </h3>
+            <p className="text-gray-600 leading-relaxed">
+              25分集中・5分休憩のサイクルで、効率的な読書習慣を身につけられます。
+            </p>
+          </div>
+
+          <div className="bg-white p-8 rounded-2xl shadow-md hover:shadow-xl transition-shadow border border-gray-100">
+            <div className="w-16 h-16 bg-gradient-to-br from-teal-100 to-teal-200 rounded-2xl flex items-center justify-center mb-6">
+              <span className="text-3xl">👥</span>
+            </div>
+            <h3 className="text-2xl font-bold text-gray-800 mb-4">
+              ソーシャル機能
+            </h3>
+            <p className="text-gray-600 leading-relaxed">
+              フォローしたユーザーの読書記録やレビューを見て、新しい本との出会いを広げましょう。
             </p>
           </div>
         </div>
@@ -166,7 +337,7 @@ export default function Home() {
       </section>
 
       {/* CTA Section */}
-      <section className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-20">
+      <section id="cta" className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-20">
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-4xl md:text-5xl font-bold mb-6">
             今すぐ始めよう

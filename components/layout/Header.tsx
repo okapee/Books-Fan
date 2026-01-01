@@ -3,12 +3,14 @@
 import { useSession, signIn, signOut } from "next-auth/react";
 import Link from "next/link";
 import Image from "next/image";
+import { useState } from "react";
 import { NotificationBell } from "@/components/notifications/NotificationBell";
 import { ensureHttps } from "@/lib/utils";
 
 export function Header() {
   const { data: session } = useSession();
   const userImageUrl = ensureHttps(session?.user?.image);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
     <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
@@ -58,12 +60,47 @@ export function Header() {
           <div className="flex items-center space-x-2 sm:space-x-3 md:space-x-4">
             {session ? (
               <>
+                {/* Mobile Menu Button */}
+                <button
+                  onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                  className="md:hidden p-2 text-gray-700 hover:bg-gray-100 rounded-lg transition"
+                  aria-label="メニュー"
+                >
+                  <svg
+                    className="w-6 h-6"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    {mobileMenuOpen ? (
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M6 18L18 6M6 6l12 12"
+                      />
+                    ) : (
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M4 6h16M4 12h16M4 18h16"
+                      />
+                    )}
+                  </svg>
+                </button>
+
                 {/* User Menu */}
                 <div className="flex items-center space-x-2 sm:space-x-3">
                   {/* Membership Badge */}
                   {session.user.membershipType === "PREMIUM" && (
                     <span className="hidden sm:inline-block bg-accent text-primary text-xs font-semibold px-2 sm:px-3 py-1 rounded-full">
                       PREMIUM
+                    </span>
+                  )}
+                  {session.user.membershipType === "CORPORATE" && (
+                    <span className="hidden sm:inline-block bg-blue-500 text-white text-xs font-semibold px-2 sm:px-3 py-1 rounded-full">
+                      CORPORATE
                     </span>
                   )}
 
@@ -143,6 +180,60 @@ export function Header() {
           </div>
         </div>
       </div>
+
+      {/* Mobile Menu Drawer */}
+      {mobileMenuOpen && session && (
+        <div className="md:hidden border-t border-gray-200 bg-white">
+          <nav className="container mx-auto px-4 py-4 space-y-1">
+            <Link
+              href="/books"
+              onClick={() => setMobileMenuOpen(false)}
+              className="block px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg transition"
+            >
+              📚 本を探す
+            </Link>
+            <Link
+              href="/reading"
+              onClick={() => setMobileMenuOpen(false)}
+              className="block px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg transition"
+            >
+              📖 読書管理
+            </Link>
+            <Link
+              href="/profile"
+              onClick={() => setMobileMenuOpen(false)}
+              className="block px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg transition"
+            >
+              👤 マイページ
+            </Link>
+            <Link
+              href="/dashboard"
+              onClick={() => setMobileMenuOpen(false)}
+              className="block px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg transition"
+            >
+              📊 ダッシュボード
+            </Link>
+            {session.user.membershipType === "CORPORATE" && (
+              <Link
+                href="/company/dashboard"
+                onClick={() => setMobileMenuOpen(false)}
+                className="block px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg transition"
+              >
+                🏢 企業ダッシュボード
+              </Link>
+            )}
+            <button
+              onClick={() => {
+                setMobileMenuOpen(false);
+                signOut();
+              }}
+              className="w-full text-left px-4 py-3 text-red-600 hover:bg-red-50 rounded-lg transition"
+            >
+              🚪 ログアウト
+            </button>
+          </nav>
+        </div>
+      )}
     </header>
   );
 }

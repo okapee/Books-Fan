@@ -932,4 +932,150 @@ export const discoveryRouter = router({
 
       return members.filter((member) => member._count.reviews > 0);
     }),
+
+  // 毎日のおすすめ本を取得
+  getDailyRecommendations: publicProcedure
+    .input(
+      z.object({
+        limit: z.number().optional().default(5),
+      })
+    )
+    .query(async ({ input, ctx }) => {
+      if (!ctx.session?.user?.id) {
+        // 未ログインユーザーには人気の本を返す
+        const books = await prisma.book.findMany({
+          where: {
+            reviewCount: { gt: 0 },
+          },
+          orderBy: [
+            { reviewCount: "desc" },
+            { averageRating: "desc" },
+          ],
+          take: input.limit,
+        });
+
+        return { books };
+      }
+
+      const userId = ctx.session.user.id;
+
+      // ユーザーの選好ジャンルを取得
+      const user = await prisma.user.findUnique({
+        where: { id: userId },
+        select: { preferredGenres: true },
+      });
+
+      // フォロー中のユーザーがレビューした本のカテゴリを取得
+      const following = await prisma.follow.findMany({
+        where: { followerId: userId },
+        select: { followingId: true },
+      });
+
+      const followingIds = following.map((f) => f.followingId);
+
+      let recommendedBooks: any[] = [];
+
+      // 1. ユーザーのジャンル設定に基づく推薦
+      if (user?.preferredGenres && user.preferredGenres.length > 0) {
+        const genreBasedBooks = await prisma.book.findMany({
+          where: {
+            categories: {
+              hasSome: user.preferredGenres,
+            },
+            reviewCount: { gt: 0 },
+            // 既読の本は除外
+            NOT: {
+              readingStatuses: {
+                some: {
+                  userId,
+                  status: "COMPLETED",
+                },
+              },
+            },
+          },
+          orderBy: [
+            { averageRating: "desc" },
+            { reviewCount: "desc" },
+          ],
+          take: Math.ceil(input.limit / 2),
+        });
+
+        recommendedBooks.push(...genreBasedBooks);
+      }
+
+      // 2. フォロー中のユーザーが高評価した本
+      if (followingIds.length > 0) {
+        const followingRecommendedBooks = await prisma.book.findMany({
+          where: {
+            reviews: {
+              some: {
+                userId: { in: followingIds },
+                rating: { gte: 4 },
+              },
+            },
+            // 既読の本は除外
+            NOT: {
+              readingStatuses: {
+                some: {
+                  userId,
+                  status: "COMPLETED",
+                },
+              },
+            },
+          },
+          orderBy: [
+            { averageRating: "desc" },
+            { reviewCount: "desc" },
+          ],
+          take: Math.ceil(input.limit / 2),
+          distinct: ["id"],
+        });
+
+        recommendedBooks.push(...followingRecommendedBooks);
+      }
+
+      // 3. 重複を削除してシャッフル
+      const uniqueBooks = Array.from(
+        new Map(recommendedBooks.map((book) => [book.id, book])).values()
+      );
+
+      // 日付ベースのシード値でシャッフル（毎日同じ順序）
+      const today = new Date().toISOString().split("T")[0];
+      const seed = parseInt(today.replace(/-/g, ""), 10) % 1000;
+
+      const shuffled = uniqueBooks.sort((a, b) => {
+        const hashA = (seed + parseInt(a.id.slice(0, 8), 16)) % 1000;
+        const hashB = (seed + parseInt(b.id.slice(0, 8), 16)) % 1000;
+        return hashA - hashB;
+      });
+
+      // 足りない場合は人気の本で補完
+      if (shuffled.length < input.limit) {
+        const popularBooks = await prisma.book.findMany({
+          where: {
+            id: { notIn: shuffled.map((b) => b.id) },
+            reviewCount: { gt: 0 },
+            NOT: {
+              readingStatuses: {
+                some: {
+                  userId,
+                  status: "COMPLETED",
+                },
+              },
+            },
+          },
+          orderBy: [
+            { reviewCount: "desc" },
+            { averageRating: "desc" },
+          ],
+          take: input.limit - shuffled.length,
+        });
+
+        shuffled.push(...popularBooks);
+      }
+
+      return {
+        books: shuffled.slice(0, input.limit),
+      };
+    }),
 });

@@ -7,10 +7,12 @@ import { PremiumUpgradePopup } from "./PremiumUpgradePopup";
 import { OnboardingTutorial } from "./OnboardingTutorial";
 import { TrialExpiredPopup } from "./TrialExpiredPopup";
 import { GenreSelectionPopup } from "./GenreSelectionPopup";
+import { DailyRecommendationPopup } from "./DailyRecommendationPopup";
 
 const PREMIUM_POPUP_KEY = "premium_popup_dismissed_at";
 const ONBOARDING_KEY = "onboarding_completed";
 const TRIAL_EXPIRED_POPUP_KEY = "trial_expired_popup_dismissed_at";
+const DAILY_RECOMMENDATION_KEY = "daily_recommendation_shown_at";
 const PREMIUM_POPUP_DELAY_DAYS = 7;
 
 export function PopupManager() {
@@ -19,6 +21,7 @@ export function PopupManager() {
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [showTrialExpired, setShowTrialExpired] = useState(false);
   const [showGenreSelection, setShowGenreSelection] = useState(false);
+  const [showDailyRecommendation, setShowDailyRecommendation] = useState(false);
 
   // Get current user data
   const { data: currentUser } = trpc.user.getCurrent.useQuery(undefined, {
@@ -32,6 +35,14 @@ export function PopupManager() {
 
   // Update genre preferences mutation
   const updateGenrePreferences = trpc.user.updateGenrePreferences.useMutation();
+
+  // Get daily recommendations
+  const { data: dailyRecommendations } = trpc.discovery.getDailyRecommendations.useQuery(
+    { limit: 5 },
+    {
+      enabled: !!session?.user && showDailyRecommendation,
+    }
+  );
 
   useEffect(() => {
     if (!session?.user || !currentUser) return;
@@ -81,6 +92,41 @@ export function PopupManager() {
       // Show onboarding for new users
       setShowOnboarding(true);
       return;
+    }
+
+    // Check if daily recommendation should be shown
+    const lastShownStr = localStorage.getItem(DAILY_RECOMMENDATION_KEY);
+    const now = new Date();
+
+    if (lastShownStr) {
+      const lastShown = new Date(parseInt(lastShownStr));
+      const isSameDay =
+        lastShown.getFullYear() === now.getFullYear() &&
+        lastShown.getMonth() === now.getMonth() &&
+        lastShown.getDate() === now.getDate();
+
+      // If already shown today, don't show again
+      if (isSameDay) {
+        // Continue to check premium popup
+      } else {
+        // New day - schedule popup at random time (1-5 minutes)
+        const randomDelay = Math.floor(Math.random() * 4 * 60 * 1000) + 60 * 1000;
+        const timer = setTimeout(() => {
+          setShowDailyRecommendation(true);
+          localStorage.setItem(DAILY_RECOMMENDATION_KEY, Date.now().toString());
+        }, randomDelay);
+
+        return () => clearTimeout(timer);
+      }
+    } else {
+      // First time - show after random delay
+      const randomDelay = Math.floor(Math.random() * 4 * 60 * 1000) + 60 * 1000;
+      const timer = setTimeout(() => {
+        setShowDailyRecommendation(true);
+        localStorage.setItem(DAILY_RECOMMENDATION_KEY, Date.now().toString());
+      }, randomDelay);
+
+      return () => clearTimeout(timer);
     }
 
     // Check when premium popup was last dismissed
@@ -133,6 +179,10 @@ export function PopupManager() {
     }
   };
 
+  const handleDailyRecommendationClose = () => {
+    setShowDailyRecommendation(false);
+  };
+
   return (
     <>
       <GenreSelectionPopup
@@ -142,6 +192,11 @@ export function PopupManager() {
       <OnboardingTutorial
         isOpen={showOnboarding}
         onComplete={handleOnboardingComplete}
+      />
+      <DailyRecommendationPopup
+        isOpen={showDailyRecommendation}
+        onClose={handleDailyRecommendationClose}
+        recommendations={dailyRecommendations?.books || []}
       />
       <TrialExpiredPopup
         isOpen={showTrialExpired}
