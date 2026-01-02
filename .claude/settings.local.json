@@ -37,7 +37,8 @@
       "Bash(openssl rand:*)",
       "Bash(npm run build:*)",
       "Bash(git config:*)",
-      "Bash(find:*)"
+      "Bash(find:*)",
+      "Bash(wait)"
     ],
     "deny": [],
     "ask": []

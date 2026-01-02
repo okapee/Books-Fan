@@ -66,6 +66,8 @@ export async function POST(req: NextRequest) {
 
     // プロモーションコードの処理
     let discounts = undefined;
+    let promotionCodeNotFound = false;
+
     if (promotionCode && typeof promotionCode === "string") {
       try {
         // プロモーションコードをコード文字列から検索
@@ -77,13 +79,28 @@ export async function POST(req: NextRequest) {
 
         if (promotionCodes.data.length > 0) {
           discounts = [{ promotion_code: promotionCodes.data[0].id }];
+          console.log(`[Stripe Checkout] Promotion code found and will be applied: ${promotionCode}`);
         } else {
-          console.warn(`Promotion code not found: ${promotionCode}`);
-          // プロモーションコードが見つからない場合でも処理を続行
+          console.warn(`[Stripe Checkout] Promotion code not found: ${promotionCode}`);
+          promotionCodeNotFound = true;
+          // プロモーションコードが見つからない場合はエラーを返す
+          return NextResponse.json(
+            {
+              error: `プロモーションコード「${promotionCode}」が見つかりませんでした。コードを確認してください。`,
+              code: "PROMOTION_CODE_NOT_FOUND"
+            },
+            { status: 400 }
+          );
         }
-      } catch (promoError) {
-        console.error("Error fetching promotion code:", promoError);
-        // プロモーションコードのエラーでもチェックアウトは続行
+      } catch (promoError: any) {
+        console.error("[Stripe Checkout] Error fetching promotion code:", promoError);
+        return NextResponse.json(
+          {
+            error: "プロモーションコードの確認中にエラーが発生しました。もう一度お試しください。",
+            code: "PROMOTION_CODE_ERROR"
+          },
+          { status: 500 }
+        );
       }
     }
 
@@ -103,13 +120,16 @@ export async function POST(req: NextRequest) {
       metadata: {
         userId: user.id,
       },
-      // プロモーションコードの手動入力を許可（バックアップとして）
-      allow_promotion_codes: true,
     };
 
-    // プロモーションコードが見つかった場合は自動適用
+    // プロモーションコードの処理
+    // ユーザーがコードを入力した場合は自動適用、未入力の場合は手動入力を許可
     if (discounts) {
+      // プロモーションコードが見つかった場合は自動適用
       checkoutSessionParams.discounts = discounts;
+    } else {
+      // コードが入力されていない場合は、Stripeページで手動入力を許可
+      checkoutSessionParams.allow_promotion_codes = true;
     }
 
     const checkoutSession = await stripe.checkout.sessions.create(checkoutSessionParams);
