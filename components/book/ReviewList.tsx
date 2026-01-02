@@ -4,7 +4,7 @@ import { trpc } from "@/lib/trpc";
 import Link from "next/link";
 import Image from "next/image";
 import { useSession } from "next-auth/react";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { AISummaryCard } from "@/components/ai/AISummaryCard";
 import { FollowButton } from "@/components/user/FollowButton";
 
@@ -30,6 +30,24 @@ export function ReviewList({
     bookId,
   });
 
+  // バッチクエリのためにレビューIDを抽出
+  const reviewIds = useMemo(
+    () => reviews?.map((r) => r.id) ?? [],
+    [reviews]
+  );
+
+  // バッチメタデータ取得（いいね数とコメント数を一度に取得）
+  const { data: batchMetadata } = trpc.review.getBatchMetadata.useQuery(
+    { reviewIds },
+    { enabled: reviewIds.length > 0 }
+  );
+
+  // ユーザーのいいね状態をバッチ取得
+  const { data: batchLikeStatus } = trpc.review.getBatchLikeStatus.useQuery(
+    { reviewIds },
+    { enabled: reviewIds.length > 0 && !!session }
+  );
+
   const deleteReview = trpc.review.delete.useMutation({
     onSuccess: () => {
       // Refetch reviews after deletion
@@ -43,10 +61,10 @@ export function ReviewList({
   });
 
   const addLike = trpc.review.addLike.useMutation({
-    onSuccess: (_, variables) => {
-      // いいね数とステータスを再取得
-      utils.review.getLikeCount.invalidate({ reviewId: variables.reviewId });
-      utils.review.checkLike.invalidate({ reviewId: variables.reviewId });
+    onSuccess: () => {
+      // バッチメタデータを再取得
+      utils.review.getBatchMetadata.invalidate({ reviewIds });
+      utils.review.getBatchLikeStatus.invalidate({ reviewIds });
       setLikingReviewId(null);
     },
     onError: () => {
@@ -55,9 +73,10 @@ export function ReviewList({
   });
 
   const removeLike = trpc.review.removeLike.useMutation({
-    onSuccess: (_, variables) => {
-      utils.review.getLikeCount.invalidate({ reviewId: variables.reviewId });
-      utils.review.checkLike.invalidate({ reviewId: variables.reviewId });
+    onSuccess: () => {
+      // バッチメタデータを再取得
+      utils.review.getBatchMetadata.invalidate({ reviewIds });
+      utils.review.getBatchLikeStatus.invalidate({ reviewIds });
       setLikingReviewId(null);
     },
     onError: () => {
@@ -253,6 +272,9 @@ export function ReviewList({
             onLikeToggle={handleLikeToggle}
             isLiking={likingReviewId === review.id}
             isLoggedIn={!!session}
+            likeCount={batchMetadata?.likes && review.id in batchMetadata.likes ? (batchMetadata.likes as Record<string, number>)[review.id] : 0}
+            commentCount={batchMetadata?.comments && review.id in batchMetadata.comments ? (batchMetadata.comments as Record<string, number>)[review.id] : 0}
+            isLiked={batchLikeStatus && review.id in batchLikeStatus ? (batchLikeStatus as Record<string, boolean>)[review.id] : false}
           />
         </div>
       ))}
@@ -274,6 +296,9 @@ interface ReviewActionsProps {
   onLikeToggle: (reviewId: string, isLiked: boolean) => void;
   isLiking: boolean;
   isLoggedIn: boolean;
+  likeCount: number;
+  commentCount: number;
+  isLiked: boolean;
 }
 
 function ReviewActions({
@@ -282,25 +307,11 @@ function ReviewActions({
   onLikeToggle,
   isLiking,
   isLoggedIn,
+  likeCount,
+  commentCount,
+  isLiked,
 }: ReviewActionsProps) {
-  // いいね数を取得
-  const { data: likeCount } = trpc.review.getLikeCount.useQuery({
-    reviewId,
-  });
-
-  // ユーザーがいいねしているかチェック
-  const { data: likeStatus } = trpc.review.checkLike.useQuery(
-    { reviewId },
-    { enabled: isLoggedIn }
-  );
-
-  // コメント数を取得
-  const { data: comments } = trpc.review.getComments.useQuery({
-    reviewId,
-  });
-
-  const isLiked = likeStatus?.isLiked || false;
-  const commentCount = comments?.length || 0;
+  // バッチデータをpropsから受け取るため、クエリは不要
 
   return (
     <div className="flex items-center gap-3 sm:gap-6 mt-3 sm:mt-4 pt-3 sm:pt-4 border-t border-gray-100">

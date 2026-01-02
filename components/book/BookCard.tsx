@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { memo } from "react";
 
 interface BookCardProps {
   id: string;
@@ -19,7 +20,12 @@ interface BookCardProps {
   userRating?: number | null;
 }
 
-export function BookCard({
+// HTMLタグを削除する関数（コンポーネント外に移動）
+const stripHtmlTags = (html: string) => {
+  return html.replace(/<[^>]*>/g, '');
+};
+
+export const BookCard = memo(function BookCard({
   id,
   googleBooksId,
   title,
@@ -33,11 +39,6 @@ export function BookCard({
 }: BookCardProps) {
   // Google Books IDがあればそれを使用、なければ通常のIDを使用
   const bookUrl = googleBooksId ? `/books/${googleBooksId}` : `/books/${id}`;
-
-  // HTMLタグを削除する関数
-  const stripHtmlTags = (html: string) => {
-    return html.replace(/<[^>]*>/g, '');
-  };
 
   return (
     <Link
@@ -135,4 +136,4 @@ export function BookCard({
       )}
     </Link>
   );
-}
+});

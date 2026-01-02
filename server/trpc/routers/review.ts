@@ -658,4 +658,71 @@ export const reviewRouter = router({
 
       return { success: true };
     }),
+
+  // バッチメタデータ取得（パフォーマンス最適化）
+  getBatchMetadata: publicProcedure
+    .input(z.object({
+      reviewIds: z.array(z.string()),
+    }))
+    .query(async ({ input }) => {
+      if (input.reviewIds.length === 0) {
+        return {
+          likes: {},
+          comments: {},
+          userLikes: {},
+        };
+      }
+
+      // いいね数とコメント数を並列で取得
+      const [likeStats, commentStats] = await Promise.all([
+        // いいね数をバッチ取得
+        prisma.reviewLike.groupBy({
+          by: ['reviewId'],
+          where: { reviewId: { in: input.reviewIds } },
+          _count: { reviewId: true },
+        }),
+        // コメント数をバッチ取得
+        prisma.reviewComment.groupBy({
+          by: ['reviewId'],
+          where: { reviewId: { in: input.reviewIds } },
+          _count: { reviewId: true },
+        }),
+      ]);
+
+      return {
+        likes: Object.fromEntries(
+          likeStats.map((stat) => [stat.reviewId, stat._count.reviewId])
+        ),
+        comments: Object.fromEntries(
+          commentStats.map((stat) => [stat.reviewId, stat._count.reviewId])
+        ),
+      };
+    }),
+
+  // ユーザーのいいね状態をバッチ取得
+  getBatchLikeStatus: publicProcedure
+    .input(z.object({
+      reviewIds: z.array(z.string()),
+    }))
+    .query(async ({ ctx, input }) => {
+      if (!ctx.session?.user?.id) {
+        return {};
+      }
+
+      if (input.reviewIds.length === 0) {
+        return {};
+      }
+
+      const userLikes = await prisma.reviewLike.findMany({
+        where: {
+          reviewId: { in: input.reviewIds },
+          userId: ctx.session.user.id,
+        },
+        select: { reviewId: true },
+      });
+
+      return Object.fromEntries(
+        userLikes.map((like) => [like.reviewId, true])
+      );
+    }),
 });

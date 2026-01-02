@@ -3,6 +3,7 @@
 import { trpc } from "@/lib/trpc";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { memo, useCallback } from "react";
 
 interface FollowButtonProps {
   userId: string;
@@ -11,7 +12,7 @@ interface FollowButtonProps {
   onFollowChange?: (isFollowing: boolean) => void;
 }
 
-export function FollowButton({
+export const FollowButton = memo(function FollowButton({
   userId,
   variant = "default",
   className = "",
@@ -42,7 +43,7 @@ export function FollowButton({
     },
   });
 
-  const handleClick = (e: React.MouseEvent) => {
+  const handleClick = useCallback((e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
 
@@ -56,7 +57,7 @@ export function FollowButton({
     } else {
       followMutation.mutate({ followingId: userId });
     }
-  };
+  }, [session, router, followStatus, unfollowMutation, followMutation, userId]);
 
   const isLoading = followMutation.isPending || unfollowMutation.isPending;
   const isFollowing = followStatus?.isFollowing || false;
@@ -172,4 +173,4 @@ export function FollowButton({
       )}
     </button>
   );
-}
+});

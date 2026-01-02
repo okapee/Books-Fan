@@ -446,28 +446,21 @@ export const discoveryRouter = router({
 
   // 全カテゴリ取得
   getCategories: publicProcedure.query(async () => {
-    const books = await prisma.book.findMany({
-      select: {
-        categories: true,
-      },
-    });
+    // データベースでグループ化と集計を実行（全テーブルスキャンを回避）
+    const categoryStats = await prisma.$queryRaw<Array<{ category: string; count: bigint }>>`
+      SELECT
+        UNNEST(categories) as category,
+        COUNT(*) as count
+      FROM "Book"
+      GROUP BY category
+      ORDER BY count DESC
+    `;
 
-    // カテゴリを抽出して集計
-    const categoryCount = new Map<string, number>();
-
-    books.forEach((book) => {
-      book.categories.forEach((category) => {
-        categoryCount.set(category, (categoryCount.get(category) || 0) + 1);
-      });
-    });
-
-    // カテゴリと本数を返す
-    return Array.from(categoryCount.entries())
-      .map(([category, count]) => ({
-        category,
-        bookCount: count,
-      }))
-      .sort((a, b) => b.bookCount - a.bookCount);
+    // カテゴリと本数を返す（bigintをnumberに変換）
+    return categoryStats.map((stat) => ({
+      category: stat.category,
+      bookCount: Number(stat.count),
+    }));
   }),
 
   // ============================================
