@@ -1,6 +1,7 @@
 import { router, publicProcedure } from "../trpc";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
+import { Prisma } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 
 export const discoveryRouter = router({
@@ -122,44 +123,64 @@ export const discoveryRouter = router({
         return { activities: [], nextCursor: undefined };
       }
 
-      // レビュー活動を取得
-      const reviews = await prisma.review.findMany({
-        where: {
-          userId: { in: followingIds },
-          isPublic: true,
-        },
-        include: {
-          user: {
-            select: {
-              id: true,
-              name: true,
-              image: true,
+      // レビューとお気に入りを並列で取得（パフォーマンス最適化）
+      const [reviews, favorites] = await Promise.all([
+        // レビュー活動を取得
+        prisma.review.findMany({
+          where: {
+            userId: { in: followingIds },
+            isPublic: true,
+          },
+          include: {
+            user: {
+              select: {
+                id: true,
+                name: true,
+                image: true,
+              },
+            },
+            book: {
+              select: {
+                id: true,
+                googleBooksId: true,
+                title: true,
+                author: true,
+                coverImageUrl: true,
+                averageRating: true,
+              },
             },
           },
-          book: true,
-        },
-        orderBy: { createdAt: "desc" },
-        take: input.limit,
-      });
-
-      // お気に入り活動を取得
-      const favorites = await prisma.favoriteBook.findMany({
-        where: {
-          userId: { in: followingIds },
-        },
-        include: {
-          user: {
-            select: {
-              id: true,
-              name: true,
-              image: true,
+          orderBy: { createdAt: "desc" },
+          take: Math.ceil(input.limit / 2),
+        }),
+        // お気に入り活動を取得
+        prisma.favoriteBook.findMany({
+          where: {
+            userId: { in: followingIds },
+          },
+          include: {
+            user: {
+              select: {
+                id: true,
+                name: true,
+                image: true,
+              },
+            },
+            book: {
+              select: {
+                id: true,
+                googleBooksId: true,
+                title: true,
+                author: true,
+                coverImageUrl: true,
+                averageRating: true,
+              },
             },
           },
-          book: true,
-        },
-        orderBy: { createdAt: "desc" },
-        take: input.limit,
-      });
+          orderBy: { createdAt: "desc" },
+          take: Math.ceil(input.limit / 2),
+        }),
+      ]);
 
       // 活動を統合してソート
       const activities = [
@@ -219,58 +240,30 @@ export const discoveryRouter = router({
       const dateThreshold = new Date();
       dateThreshold.setDate(dateThreshold.getDate() - input.daysRange);
 
-      // 期間内のレビューを取得
-      const reviews = await prisma.review.findMany({
-        where: {
-          userId: { in: followingIds },
-          isPublic: true,
-          createdAt: { gte: dateThreshold },
-        },
-        include: {
-          book: true,
-        },
-      });
+      // データベースで集計（レビューとお気に入りを統合してカウント）
+      const trendingBooks = await prisma.$queryRaw<any[]>`
+        WITH activity AS (
+          SELECT "bookId", COUNT(*) as activity_count
+          FROM (
+            SELECT "bookId" FROM "Review"
+            WHERE "userId" = ANY(${followingIds}::text[])
+              AND "isPublic" = true
+              AND "createdAt" >= ${dateThreshold}
+            UNION ALL
+            SELECT "bookId" FROM "FavoriteBook"
+            WHERE "userId" = ANY(${followingIds}::text[])
+              AND "createdAt" >= ${dateThreshold}
+          ) combined
+          GROUP BY "bookId"
+        )
+        SELECT b.*, a.activity_count as "activityCount"
+        FROM "Book" b
+        INNER JOIN activity a ON a."bookId" = b.id
+        ORDER BY a.activity_count DESC, b."averageRating" DESC
+        LIMIT ${input.limit}
+      `;
 
-      // 期間内のお気に入りを取得
-      const favorites = await prisma.favoriteBook.findMany({
-        where: {
-          userId: { in: followingIds },
-          createdAt: { gte: dateThreshold },
-        },
-        include: {
-          book: true,
-        },
-      });
-
-      // 本ごとのアクティビティ数を集計
-      const bookActivity = new Map<string, { book: any; count: number }>();
-
-      reviews.forEach((review) => {
-        const existing = bookActivity.get(review.bookId);
-        if (existing) {
-          existing.count += 1;
-        } else {
-          bookActivity.set(review.bookId, { book: review.book, count: 1 });
-        }
-      });
-
-      favorites.forEach((favorite) => {
-        const existing = bookActivity.get(favorite.bookId);
-        if (existing) {
-          existing.count += 1;
-        } else {
-          bookActivity.set(favorite.bookId, { book: favorite.book, count: 1 });
-        }
-      });
-
-      // アクティビティ数でソートして返す
-      return Array.from(bookActivity.values())
-        .sort((a, b) => b.count - a.count)
-        .slice(0, input.limit)
-        .map((item) => ({
-          ...item.book,
-          activityCount: item.count,
-        }));
+      return trendingBooks;
     }),
 
   // ============================================
@@ -952,123 +945,76 @@ export const discoveryRouter = router({
 
       const userId = ctx.session.user.id;
 
-      // ユーザーの選好ジャンルを取得
-      const user = await prisma.user.findUnique({
-        where: { id: userId },
-        select: { preferredGenres: true },
-      });
-
-      // フォロー中のユーザーがレビューした本のカテゴリを取得
-      const following = await prisma.follow.findMany({
-        where: { followerId: userId },
-        select: { followingId: true },
-      });
+      // ユーザー情報とフォローリストを並列取得
+      const [user, following] = await Promise.all([
+        prisma.user.findUnique({
+          where: { id: userId },
+          select: { preferredGenres: true },
+        }),
+        prisma.follow.findMany({
+          where: { followerId: userId },
+          select: { followingId: true },
+        }),
+      ]);
 
       const followingIds = following.map((f) => f.followingId);
+      const preferredGenres = user?.preferredGenres || [];
 
-      let recommendedBooks: any[] = [];
+      // CTEを使用して全ての推薦本を一度に取得（データベース側で重複排除とシャッフル）
+      const books = await prisma.$queryRaw<any[]>`
+        WITH genre_books AS (
+          SELECT DISTINCT b.*
+          FROM "Book" b
+          WHERE ${preferredGenres.length > 0 ? Prisma.sql`b.categories && ${preferredGenres}::text[]` : Prisma.sql`false`}
+            AND b."reviewCount" > 0
+            AND NOT EXISTS (
+              SELECT 1 FROM "ReadingStatus" rs
+              WHERE rs."bookId" = b.id
+                AND rs."userId" = ${userId}
+                AND rs.status = 'COMPLETED'
+            )
+          ORDER BY b."averageRating" DESC, b."reviewCount" DESC
+          LIMIT ${Math.ceil(input.limit * 0.5)}
+        ),
+        following_books AS (
+          SELECT DISTINCT b.*
+          FROM "Book" b
+          INNER JOIN "Review" r ON r."bookId" = b.id
+          WHERE ${followingIds.length > 0 ? Prisma.sql`r."userId" = ANY(${followingIds}::text[])` : Prisma.sql`false`}
+            AND r.rating >= 4
+            AND NOT EXISTS (
+              SELECT 1 FROM "ReadingStatus" rs
+              WHERE rs."bookId" = b.id
+                AND rs."userId" = ${userId}
+                AND rs.status = 'COMPLETED'
+            )
+          ORDER BY b."averageRating" DESC, b."reviewCount" DESC
+          LIMIT ${Math.ceil(input.limit * 0.5)}
+        ),
+        popular_books AS (
+          SELECT DISTINCT b.*
+          FROM "Book" b
+          WHERE b."reviewCount" > 0
+            AND NOT EXISTS (
+              SELECT 1 FROM "ReadingStatus" rs
+              WHERE rs."bookId" = b.id
+                AND rs."userId" = ${userId}
+                AND rs.status = 'COMPLETED'
+            )
+          ORDER BY b."reviewCount" DESC, b."averageRating" DESC
+          LIMIT ${Math.ceil(input.limit * 0.3)}
+        )
+        SELECT * FROM (
+          SELECT * FROM genre_books
+          UNION
+          SELECT * FROM following_books
+          UNION
+          SELECT * FROM popular_books
+        ) combined
+        ORDER BY RANDOM()
+        LIMIT ${input.limit}
+      `;
 
-      // 1. ユーザーのジャンル設定に基づく推薦
-      if (user?.preferredGenres && user.preferredGenres.length > 0) {
-        const genreBasedBooks = await prisma.book.findMany({
-          where: {
-            categories: {
-              hasSome: user.preferredGenres,
-            },
-            reviewCount: { gt: 0 },
-            // 既読の本は除外
-            NOT: {
-              readingStatuses: {
-                some: {
-                  userId,
-                  status: "COMPLETED",
-                },
-              },
-            },
-          },
-          orderBy: [
-            { averageRating: "desc" },
-            { reviewCount: "desc" },
-          ],
-          take: Math.ceil(input.limit / 2),
-        });
-
-        recommendedBooks.push(...genreBasedBooks);
-      }
-
-      // 2. フォロー中のユーザーが高評価した本
-      if (followingIds.length > 0) {
-        const followingRecommendedBooks = await prisma.book.findMany({
-          where: {
-            reviews: {
-              some: {
-                userId: { in: followingIds },
-                rating: { gte: 4 },
-              },
-            },
-            // 既読の本は除外
-            NOT: {
-              readingStatuses: {
-                some: {
-                  userId,
-                  status: "COMPLETED",
-                },
-              },
-            },
-          },
-          orderBy: [
-            { averageRating: "desc" },
-            { reviewCount: "desc" },
-          ],
-          take: Math.ceil(input.limit / 2),
-          distinct: ["id"],
-        });
-
-        recommendedBooks.push(...followingRecommendedBooks);
-      }
-
-      // 3. 重複を削除してシャッフル
-      const uniqueBooks = Array.from(
-        new Map(recommendedBooks.map((book) => [book.id, book])).values()
-      );
-
-      // 日付ベースのシード値でシャッフル（毎日同じ順序）
-      const today = new Date().toISOString().split("T")[0];
-      const seed = parseInt(today.replace(/-/g, ""), 10) % 1000;
-
-      const shuffled = uniqueBooks.sort((a, b) => {
-        const hashA = (seed + parseInt(a.id.slice(0, 8), 16)) % 1000;
-        const hashB = (seed + parseInt(b.id.slice(0, 8), 16)) % 1000;
-        return hashA - hashB;
-      });
-
-      // 足りない場合は人気の本で補完
-      if (shuffled.length < input.limit) {
-        const popularBooks = await prisma.book.findMany({
-          where: {
-            id: { notIn: shuffled.map((b) => b.id) },
-            reviewCount: { gt: 0 },
-            NOT: {
-              readingStatuses: {
-                some: {
-                  userId,
-                  status: "COMPLETED",
-                },
-              },
-            },
-          },
-          orderBy: [
-            { reviewCount: "desc" },
-            { averageRating: "desc" },
-          ],
-          take: input.limit - shuffled.length,
-        });
-
-        shuffled.push(...popularBooks);
-      }
-
-      return {
-        books: shuffled.slice(0, input.limit),
-      };
+      return { books };
     }),
 });
