@@ -9,11 +9,21 @@ export async function POST(req: NextRequest) {
     const session = await getServerSession(authOptions);
 
     if (!session?.user?.id) {
+      console.error("[Stripe Checkout] No user session found");
       return NextResponse.json(
         { error: "認証が必要です" },
         { status: 401 }
       );
     }
+
+    // リクエストボディからプロモーションコードを取得
+    let body;
+    try {
+      body = await req.json();
+    } catch (e) {
+      body = {};
+    }
+    const { promotionCode } = body;
 
     const user = await prisma.user.findUnique({
       where: { id: session.user.id },
@@ -54,8 +64,31 @@ export async function POST(req: NextRequest) {
       });
     }
 
+    // プロモーションコードの処理
+    let discounts = undefined;
+    if (promotionCode && typeof promotionCode === "string") {
+      try {
+        // プロモーションコードをコード文字列から検索
+        const promotionCodes = await stripe.promotionCodes.list({
+          code: promotionCode,
+          active: true,
+          limit: 1,
+        });
+
+        if (promotionCodes.data.length > 0) {
+          discounts = [{ promotion_code: promotionCodes.data[0].id }];
+        } else {
+          console.warn(`Promotion code not found: ${promotionCode}`);
+          // プロモーションコードが見つからない場合でも処理を続行
+        }
+      } catch (promoError) {
+        console.error("Error fetching promotion code:", promoError);
+        // プロモーションコードのエラーでもチェックアウトは続行
+      }
+    }
+
     // Checkout Sessionを作成
-    const checkoutSession = await stripe.checkout.sessions.create({
+    const checkoutSessionParams: any = {
       customer: customerId,
       mode: "subscription",
       payment_method_types: ["card"],
@@ -70,13 +103,34 @@ export async function POST(req: NextRequest) {
       metadata: {
         userId: user.id,
       },
-    });
+      // プロモーションコードの手動入力を許可（バックアップとして）
+      allow_promotion_codes: true,
+    };
+
+    // プロモーションコードが見つかった場合は自動適用
+    if (discounts) {
+      checkoutSessionParams.discounts = discounts;
+    }
+
+    const checkoutSession = await stripe.checkout.sessions.create(checkoutSessionParams);
 
     return NextResponse.json({ sessionId: checkoutSession.id, url: checkoutSession.url });
-  } catch (error) {
-    console.error("Stripe checkout error:", error);
+  } catch (error: any) {
+    console.error("[Stripe Checkout] Detailed error:", {
+      message: error?.message,
+      type: error?.type,
+      code: error?.code,
+      stack: error?.stack,
+    });
+
+    // より具体的なエラーメッセージを返す
+    const errorMessage = error?.message || "チェックアウトセッションの作成に失敗しました";
+
     return NextResponse.json(
-      { error: "チェックアウトセッションの作成に失敗しました" },
+      {
+        error: errorMessage,
+        details: process.env.NODE_ENV === "development" ? error?.message : undefined
+      },
       { status: 500 }
     );
   }

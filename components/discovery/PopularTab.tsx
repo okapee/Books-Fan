@@ -3,6 +3,7 @@
 import { trpc } from "@/lib/trpc";
 import { BookCard } from "@/components/book/BookCard";
 import { EmptyState } from "./EmptyState";
+import { Skeleton, SkeletonCard } from "@/components/ui/Skeleton";
 
 export function PopularTab() {
   const { data: highestRated, isLoading: ratedLoading } =
@@ -16,13 +17,16 @@ export function PopularTab() {
 
   if (ratedLoading || trendingLoading || popularLoading) {
     return (
-      <div className="space-y-8">
+      <div className="space-y-12">
         {[1, 2, 3].map((section) => (
-          <div key={section} className="animate-pulse">
-            <div className="h-8 bg-gray-200 rounded w-1/4 mb-4" />
+          <div key={section}>
+            <div className="mb-6">
+              <Skeleton className="h-8 w-48 mb-2" />
+              <Skeleton className="h-5 w-64" />
+            </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {[1, 2, 3].map((i) => (
-                <div key={i} className="h-96 bg-gray-200 rounded-xl" />
+                <SkeletonCard key={i} />
               ))}
             </div>
           </div>

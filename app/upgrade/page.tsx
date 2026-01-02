@@ -10,6 +10,7 @@ export default function UpgradePage() {
   const { data: session } = useSession();
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
+  const [promotionCode, setPromotionCode] = useState("");
 
   // 現在のユーザー情報を取得
   const { data: user } = trpc.user.getCurrent.useQuery(undefined, {
@@ -61,21 +62,29 @@ export default function UpgradePage() {
         headers: {
           "Content-Type": "application/json",
         },
+        body: JSON.stringify({
+          promotionCode: promotionCode.trim() || undefined,
+        }),
       });
 
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || "エラーが発生しました");
+        const errorMsg = data.error || "エラーが発生しました";
+        console.error("Checkout error response:", data);
+        throw new Error(errorMsg);
       }
 
       // Stripe Checkoutにリダイレクト
       if (data.url) {
         window.location.href = data.url;
+      } else {
+        throw new Error("チェックアウトURLが取得できませんでした");
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Checkout error:", error);
-      alert("エラーが発生しました。もう一度お試しください。");
+      const errorMessage = error?.message || "エラーが発生しました。もう一度お試しください。";
+      alert(errorMessage);
       setIsLoading(false);
     }
   };
@@ -240,6 +249,27 @@ export default function UpgradePage() {
                         : "🎉 2週間無料トライアル"}
                     </button>
                   )}
+
+                  {/* プロモーションコード入力 */}
+                  <div className="text-left">
+                    <label
+                      htmlFor="promotionCode"
+                      className="block text-white/90 text-sm font-semibold mb-2"
+                    >
+                      プロモーションコード（任意）
+                    </label>
+                    <input
+                      id="promotionCode"
+                      type="text"
+                      value={promotionCode}
+                      onChange={(e) => setPromotionCode(e.target.value)}
+                      placeholder="例: 3MONTHS_FREE"
+                      className="w-full px-4 py-2 rounded-lg border-2 border-white/30 bg-white/10 text-white placeholder-white/50 focus:outline-none focus:border-yellow-300 focus:bg-white/20 transition"
+                    />
+                    <p className="text-white/70 text-xs mt-1">
+                      クーポンコードをお持ちの方はこちらに入力してください
+                    </p>
+                  </div>
 
                   {/* 有料プランへのアップグレードボタン */}
                   <button
