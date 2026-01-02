@@ -38,7 +38,8 @@
       "Bash(npm run build:*)",
       "Bash(git config:*)",
       "Bash(find:*)",
-      "Bash(wait)"
+      "Bash(wait)",
+      "Bash(npx pwa-asset-generator:*)"
     ],
     "deny": [],
     "ask": []
