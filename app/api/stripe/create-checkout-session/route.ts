@@ -46,8 +46,23 @@ export async function POST(req: NextRequest) {
 
     // Stripe顧客を作成または取得
     let customerId = user.stripeCustomerId;
+    let needsNewCustomer = false;
 
-    if (!customerId) {
+    // 既存の顧客IDがある場合、その顧客が現在のモード（テスト/本番）で存在するか確認
+    if (customerId) {
+      try {
+        await stripe.customers.retrieve(customerId);
+        console.log(`[Stripe Checkout] Existing customer found: ${customerId}`);
+      } catch (error: any) {
+        // 顧客が見つからない場合（テストモードと本番モードの不一致など）
+        console.warn(`[Stripe Checkout] Customer ${customerId} not found in current mode. Creating new customer.`);
+        needsNewCustomer = true;
+        customerId = null;
+      }
+    }
+
+    // 顧客IDがない、または現在のモードで見つからない場合は新規作成
+    if (!customerId || needsNewCustomer) {
       const customer = await stripe.customers.create({
         email: user.email!,
         metadata: {
@@ -56,6 +71,7 @@ export async function POST(req: NextRequest) {
       });
 
       customerId = customer.id;
+      console.log(`[Stripe Checkout] New customer created: ${customerId}`);
 
       // DBに顧客IDを保存
       await prisma.user.update({
