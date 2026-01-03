@@ -26,6 +26,7 @@ export const userRouter = router({
         bio: true,
         membershipType: true,
         subscriptionStatus: true,
+        stripeCustomerId: true,
         premiumTrialStartedAt: true,
         premiumTrialEndsAt: true,
         currentPeriodEnd: true,
