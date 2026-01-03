@@ -57,18 +57,18 @@ export function OnboardingTutorial({ isOpen, onComplete }: OnboardingTutorialPro
       icon: "✍️",
       content: (
         <div className="space-y-4">
-          <div className="grid md:grid-cols-2 gap-4">
-            <div className="bg-purple-50 rounded-lg p-4 border border-purple-200">
-              <div className="text-3xl mb-2">🔍</div>
-              <h4 className="font-semibold text-purple-900 mb-2">1. 本を検索</h4>
-              <p className="text-sm text-purple-800">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+            <div className="bg-purple-50 rounded-lg p-3 sm:p-4 border border-purple-200">
+              <div className="text-2xl sm:text-3xl mb-2">🔍</div>
+              <h4 className="font-semibold text-sm sm:text-base text-purple-900 mb-2">1. 本を検索</h4>
+              <p className="text-xs sm:text-sm text-purple-800">
                 「本を探す」から読んだ本を検索できます
               </p>
             </div>
-            <div className="bg-green-50 rounded-lg p-4 border border-green-200">
-              <div className="text-3xl mb-2">⭐</div>
-              <h4 className="font-semibold text-green-900 mb-2">2. レビューを投稿</h4>
-              <p className="text-sm text-green-800">
+            <div className="bg-green-50 rounded-lg p-3 sm:p-4 border border-green-200">
+              <div className="text-2xl sm:text-3xl mb-2">⭐</div>
+              <h4 className="font-semibold text-sm sm:text-base text-green-900 mb-2">2. レビューを投稿</h4>
+              <p className="text-xs sm:text-sm text-green-800">
                 評価と感想を書いて投稿しましょう
               </p>
             </div>
@@ -85,25 +85,25 @@ export function OnboardingTutorial({ isOpen, onComplete }: OnboardingTutorialPro
       icon: "📖",
       content: (
         <div className="space-y-4">
-          <div className="grid md:grid-cols-3 gap-4">
-            <div className="bg-blue-50 rounded-lg p-4 border border-blue-200">
-              <div className="text-3xl mb-2">📚</div>
-              <h4 className="font-semibold text-blue-900 mb-2">読みたい</h4>
-              <p className="text-sm text-blue-800">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
+            <div className="bg-blue-50 rounded-lg p-3 sm:p-4 border border-blue-200">
+              <div className="text-2xl sm:text-3xl mb-2">📚</div>
+              <h4 className="font-semibold text-sm sm:text-base text-blue-900 mb-2">読みたい</h4>
+              <p className="text-xs sm:text-sm text-blue-800">
                 気になる本をリストに追加
               </p>
             </div>
-            <div className="bg-green-50 rounded-lg p-4 border border-green-200">
-              <div className="text-3xl mb-2">📖</div>
-              <h4 className="font-semibold text-green-900 mb-2">読書中</h4>
-              <p className="text-sm text-green-800">
+            <div className="bg-green-50 rounded-lg p-3 sm:p-4 border border-green-200">
+              <div className="text-2xl sm:text-3xl mb-2">📖</div>
+              <h4 className="font-semibold text-sm sm:text-base text-green-900 mb-2">読書中</h4>
+              <p className="text-xs sm:text-sm text-green-800">
                 今読んでいる本を管理
               </p>
             </div>
-            <div className="bg-purple-50 rounded-lg p-4 border border-purple-200">
-              <div className="text-3xl mb-2">✅</div>
-              <h4 className="font-semibold text-purple-900 mb-2">読了</h4>
-              <p className="text-sm text-purple-800">
+            <div className="bg-purple-50 rounded-lg p-3 sm:p-4 border border-purple-200">
+              <div className="text-2xl sm:text-3xl mb-2">✅</div>
+              <h4 className="font-semibold text-sm sm:text-base text-purple-900 mb-2">読了</h4>
+              <p className="text-xs sm:text-sm text-purple-800">
                 読み終えた本を記録
               </p>
             </div>
@@ -186,25 +186,25 @@ export function OnboardingTutorial({ isOpen, onComplete }: OnboardingTutorialPro
           <p className="text-gray-600">
             早速、本を探してレビューを書いてみましょう
           </p>
-          <div className="grid md:grid-cols-3 gap-4 mt-8">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 mt-6 sm:mt-8">
             <Link
               href="/books"
               onClick={onComplete}
-              className="bg-blue-600 text-white px-6 py-4 rounded-xl font-semibold hover:bg-blue-700 transition text-center"
+              className="bg-blue-600 text-white px-4 sm:px-6 py-3 sm:py-4 rounded-lg sm:rounded-xl font-semibold hover:bg-blue-700 transition text-center text-sm sm:text-base"
             >
               📖 本を探す
             </Link>
             <Link
               href="/reading"
               onClick={onComplete}
-              className="bg-green-600 text-white px-6 py-4 rounded-xl font-semibold hover:bg-green-700 transition text-center"
+              className="bg-green-600 text-white px-4 sm:px-6 py-3 sm:py-4 rounded-lg sm:rounded-xl font-semibold hover:bg-green-700 transition text-center text-sm sm:text-base"
             >
               📚 読書管理
             </Link>
             <Link
               href="/upgrade"
               onClick={onComplete}
-              className="bg-gradient-to-r from-yellow-400 to-orange-400 text-gray-900 px-6 py-4 rounded-xl font-semibold hover:shadow-lg transition text-center"
+              className="bg-gradient-to-r from-yellow-400 to-orange-400 text-gray-900 px-4 sm:px-6 py-3 sm:py-4 rounded-lg sm:rounded-xl font-semibold hover:shadow-lg transition text-center text-sm sm:text-base"
             >
               ⭐ プレミアム
             </Link>
@@ -236,54 +236,54 @@ export function OnboardingTutorial({ isOpen, onComplete }: OnboardingTutorialPro
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-fadeIn">
-      <div className="bg-white rounded-2xl shadow-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto animate-slideUp">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/50 backdrop-blur-sm animate-fadeIn">
+      <div className="bg-white rounded-xl sm:rounded-2xl shadow-2xl max-w-3xl w-full max-h-[95vh] sm:max-h-[90vh] overflow-y-auto animate-slideUp">
         {/* Progress Bar */}
-        <div className="bg-gray-100 h-2 rounded-t-2xl">
+        <div className="bg-gray-100 h-2 rounded-t-xl sm:rounded-t-2xl">
           <div
-            className="bg-gradient-to-r from-purple-600 to-blue-600 h-full rounded-tl-2xl transition-all duration-300"
+            className="bg-gradient-to-r from-purple-600 to-blue-600 h-full rounded-tl-xl sm:rounded-tl-2xl transition-all duration-300"
             style={{ width: `${((currentStep + 1) / steps.length) * 100}%` }}
           />
         </div>
 
         {/* Header */}
-        <div className="text-center p-8 border-b border-gray-200">
-          <div className="text-6xl mb-4">{currentStepData.icon}</div>
-          <h2 className="text-3xl font-bold text-gray-900 mb-2">
+        <div className="text-center p-4 sm:p-6 md:p-8 border-b border-gray-200">
+          <div className="text-4xl sm:text-5xl md:text-6xl mb-3 sm:mb-4">{currentStepData.icon}</div>
+          <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 mb-2">
             {currentStepData.title}
           </h2>
-          <p className="text-gray-600 text-lg">
+          <p className="text-sm sm:text-base md:text-lg text-gray-600">
             {currentStepData.description}
           </p>
         </div>
 
         {/* Content */}
-        <div className="p-8">
+        <div className="p-4 sm:p-6 md:p-8">
           {currentStepData.content}
         </div>
 
         {/* Navigation */}
-        <div className="flex items-center justify-between p-6 border-t border-gray-200 bg-gray-50 rounded-b-2xl">
-          <div className="flex items-center gap-2">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4 p-4 sm:p-6 border-t border-gray-200 bg-gray-50 rounded-b-xl sm:rounded-b-2xl">
+          <div className="flex items-center gap-1.5 sm:gap-2 order-2 sm:order-1">
             {steps.map((_, index) => (
               <div
                 key={index}
-                className={`h-2 rounded-full transition-all ${
+                className={`h-1.5 sm:h-2 rounded-full transition-all ${
                   index === currentStep
-                    ? "w-8 bg-purple-600"
+                    ? "w-6 sm:w-8 bg-purple-600"
                     : index < currentStep
-                    ? "w-2 bg-purple-400"
-                    : "w-2 bg-gray-300"
+                    ? "w-1.5 sm:w-2 bg-purple-400"
+                    : "w-1.5 sm:w-2 bg-gray-300"
                 }`}
               />
             ))}
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3 w-full sm:w-auto order-1 sm:order-2">
             {!isLastStep && (
               <button
                 onClick={handleSkip}
-                className="text-gray-600 hover:text-gray-900 px-4 py-2 rounded-lg transition"
+                className="text-gray-600 hover:text-gray-900 px-3 sm:px-4 py-2 rounded-lg transition text-sm sm:text-base whitespace-nowrap"
               >
                 スキップ
               </button>
@@ -291,14 +291,14 @@ export function OnboardingTutorial({ isOpen, onComplete }: OnboardingTutorialPro
             {currentStep > 0 && (
               <button
                 onClick={handlePrevious}
-                className="border-2 border-gray-300 text-gray-700 px-6 py-2 rounded-lg font-semibold hover:bg-gray-100 transition"
+                className="border-2 border-gray-300 text-gray-700 px-4 sm:px-6 py-2 rounded-lg font-semibold hover:bg-gray-100 transition text-sm sm:text-base whitespace-nowrap flex-1 sm:flex-none"
               >
                 戻る
               </button>
             )}
             <button
               onClick={handleNext}
-              className="bg-gradient-to-r from-purple-600 to-blue-600 text-white px-8 py-2 rounded-lg font-semibold hover:shadow-lg transition"
+              className="bg-gradient-to-r from-purple-600 to-blue-600 text-white px-6 sm:px-8 py-2 rounded-lg font-semibold hover:shadow-lg transition text-sm sm:text-base whitespace-nowrap flex-1 sm:flex-none"
             >
               {isLastStep ? "始める" : "次へ"}
             </button>

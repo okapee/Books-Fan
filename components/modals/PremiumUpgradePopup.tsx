@@ -45,46 +45,46 @@ export function PremiumUpgradePopup({ isOpen, onClose }: PremiumUpgradePopupProp
   ];
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-fadeIn">
-      <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto animate-slideUp">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/50 backdrop-blur-sm animate-fadeIn">
+      <div className="bg-white rounded-xl sm:rounded-2xl shadow-2xl max-w-2xl w-full max-h-[95vh] sm:max-h-[90vh] overflow-y-auto animate-slideUp">
         {/* Header */}
-        <div className="relative bg-gradient-to-r from-purple-600 to-blue-600 text-white p-8 rounded-t-2xl">
+        <div className="relative bg-gradient-to-r from-purple-600 to-blue-600 text-white p-4 sm:p-6 md:p-8 rounded-t-xl sm:rounded-t-2xl">
           <button
             onClick={handleClose}
-            className="absolute top-4 right-4 text-white/80 hover:text-white transition"
+            className="absolute top-3 right-3 sm:top-4 sm:right-4 text-white/80 hover:text-white transition"
             aria-label="閉じる"
           >
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
 
           <div className="text-center">
-            <div className="inline-block bg-yellow-400 text-purple-900 text-xs font-bold px-3 py-1 rounded-full mb-4">
+            <div className="inline-block bg-yellow-400 text-purple-900 text-xs font-bold px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-full mb-3 sm:mb-4">
               PREMIUM限定
             </div>
-            <h2 className="text-3xl font-bold mb-2">
+            <h2 className="text-xl sm:text-2xl md:text-3xl font-bold mb-2">
               読書体験をアップグレード
             </h2>
-            <p className="text-white/90 text-lg">
+            <p className="text-white/90 text-sm sm:text-base md:text-lg">
               プレミアムプランで、さらに充実した読書ライフを
             </p>
           </div>
         </div>
 
         {/* Features Grid */}
-        <div className="p-8">
-          <div className="grid md:grid-cols-2 gap-6 mb-8">
+        <div className="p-4 sm:p-6 md:p-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mb-6 sm:mb-8">
             {features.map((feature, index) => (
               <div
                 key={index}
-                className="bg-gradient-to-br from-purple-50 to-blue-50 rounded-xl p-6 border border-purple-100 hover:shadow-lg transition"
+                className="bg-gradient-to-br from-purple-50 to-blue-50 rounded-lg sm:rounded-xl p-4 sm:p-6 border border-purple-100 hover:shadow-lg transition"
               >
-                <div className="text-4xl mb-3">{feature.icon}</div>
-                <h3 className="text-lg font-bold text-gray-900 mb-2">
+                <div className="text-3xl sm:text-4xl mb-2 sm:mb-3">{feature.icon}</div>
+                <h3 className="text-base sm:text-lg font-bold text-gray-900 mb-2">
                   {feature.title}
                 </h3>
-                <p className="text-gray-600 text-sm mb-2">
+                <p className="text-gray-600 text-xs sm:text-sm mb-2">
                   {feature.description}
                 </p>
                 <div className="inline-block bg-purple-100 text-purple-700 text-xs font-semibold px-2 py-1 rounded">
@@ -95,19 +95,19 @@ export function PremiumUpgradePopup({ isOpen, onClose }: PremiumUpgradePopupProp
           </div>
 
           {/* Pricing */}
-          <div className="bg-gradient-to-r from-yellow-50 to-orange-50 rounded-xl p-6 border-2 border-yellow-200 mb-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-600 mb-1">今すぐ始める</p>
-                <div className="flex items-baseline gap-2">
-                  <span className="text-4xl font-bold text-purple-600">¥980</span>
-                  <span className="text-gray-600">/月</span>
+          <div className="bg-gradient-to-r from-yellow-50 to-orange-50 rounded-lg sm:rounded-xl p-4 sm:p-6 border-2 border-yellow-200 mb-4 sm:mb-6">
+            <div className="flex flex-col sm:flex-row items-center sm:items-center justify-between gap-4">
+              <div className="text-center sm:text-left">
+                <p className="text-xs sm:text-sm text-gray-600 mb-1">今すぐ始める</p>
+                <div className="flex items-baseline gap-2 justify-center sm:justify-start">
+                  <span className="text-3xl sm:text-4xl font-bold text-purple-600">¥980</span>
+                  <span className="text-sm sm:text-base text-gray-600">/月</span>
                 </div>
               </div>
               <Link
                 href="/upgrade"
                 onClick={handleClose}
-                className="bg-gradient-to-r from-purple-600 to-blue-600 text-white px-8 py-4 rounded-xl font-bold text-lg hover:shadow-xl transition transform hover:scale-105"
+                className="w-full sm:w-auto bg-gradient-to-r from-purple-600 to-blue-600 text-white px-6 sm:px-8 py-3 sm:py-4 rounded-lg sm:rounded-xl font-bold text-base sm:text-lg hover:shadow-xl transition transform hover:scale-105 text-center"
               >
                 アップグレード
               </Link>
