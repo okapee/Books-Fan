@@ -2,6 +2,7 @@ import { router, publicProcedure } from "../trpc";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { TRPCError } from "@trpc/server";
+import { stripe } from "@/lib/stripe";
 
 export const userRouter = router({
   // 現在のユーザー情報を取得
@@ -283,5 +284,90 @@ export const userRouter = router({
       });
 
       return updatedUser;
+    }),
+
+  // アカウント削除（退会）
+  deleteAccount: publicProcedure
+    .input(
+      z.object({
+        confirmation: z.string().refine((val) => val === "DELETE", {
+          message: "確認文字列が一致しません",
+        }),
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      if (!ctx.session?.user?.id) {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "ログインが必要です",
+        });
+      }
+
+      const userId = ctx.session.user.id;
+
+      // ユーザー情報を取得（Stripe連携情報を確認）
+      const user = await prisma.user.findUnique({
+        where: { id: userId },
+        select: {
+          stripeSubscriptionId: true,
+          stripeCustomerId: true,
+          membershipType: true,
+          currentPeriodEnd: true,
+        },
+      });
+
+      if (!user) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "ユーザーが見つかりません",
+        });
+      }
+
+      // Stripeのサブスクリプションがある場合、期間終了時にキャンセル
+      if (user.stripeSubscriptionId) {
+        try {
+          // サブスクリプションを期間終了時にキャンセル（即座にはキャンセルしない）
+          await stripe.subscriptions.update(user.stripeSubscriptionId, {
+            cancel_at_period_end: true,
+            metadata: {
+              cancelled_by_user: "true",
+              cancellation_reason: "account_deletion",
+            },
+          });
+
+          console.log(
+            `Stripe subscription ${user.stripeSubscriptionId} set to cancel at period end for user ${userId}`
+          );
+        } catch (error) {
+          console.error("Failed to cancel Stripe subscription:", error);
+          // Stripe のキャンセルに失敗してもアカウント削除は続行
+          // （Webhookで後から処理される可能性があるため）
+        }
+      }
+
+      // トランザクション内で関連データをすべて削除
+      await prisma.$transaction(async (tx) => {
+        // ユーザーに関連するデータを削除
+        await tx.reviewLike.deleteMany({ where: { userId } });
+        await tx.reviewComment.deleteMany({ where: { userId } });
+        await tx.review.deleteMany({ where: { userId } });
+        await tx.favoriteBook.deleteMany({ where: { userId } });
+        await tx.readingStatus.deleteMany({ where: { userId } });
+        await tx.aISummary.deleteMany({ where: { userId } });
+        await tx.notification.deleteMany({ where: { OR: [{ receiverId: userId }, { senderId: userId }] } });
+        await tx.follow.deleteMany({ where: { OR: [{ followerId: userId }, { followingId: userId }] } });
+
+        // 最後にユーザー自体を削除
+        await tx.user.delete({ where: { id: userId } });
+      });
+
+      return {
+        success: true,
+        message: user.stripeSubscriptionId
+          ? "アカウントを削除しました。サブスクリプションは現在の課金期間終了時に自動的にキャンセルされます。"
+          : "アカウントを削除しました",
+        subscriptionCancelled: !!user.stripeSubscriptionId,
+        currentPeriodEnd: user.currentPeriodEnd,
+      };
     }),
 });

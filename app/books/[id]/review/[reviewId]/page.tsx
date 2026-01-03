@@ -364,50 +364,50 @@ export default function ReviewDetailPage() {
 
   // View Mode (Default)
   return (
-    <div className="min-h-screen bg-gray-50 py-12">
+    <div className="min-h-screen bg-gray-50 py-4 sm:py-12">
       {reviewStructuredData && <StructuredData data={reviewStructuredData} />}
-      <div className="container mx-auto px-4 max-w-4xl">
+      <div className="container mx-auto px-3 sm:px-4 max-w-4xl">
         {/* Review Card */}
-        <div className="bg-white rounded-xl shadow-lg p-8 mb-6">
+        <div className="bg-white rounded-xl shadow-lg p-4 sm:p-8 mb-4 sm:mb-6">
           {/* Back Link */}
           <Link
             href={`/books/${bookId}`}
-            className="inline-flex items-center text-primary hover:underline mb-6"
+            className="inline-flex items-center text-sm sm:text-base text-primary hover:underline mb-4 sm:mb-6"
           >
             ← 本の詳細に戻る
           </Link>
 
           {/* Book Info */}
           {book && (
-            <div className="flex gap-4 p-4 bg-gray-50 rounded-lg mb-6">
+            <div className="flex gap-3 sm:gap-4 p-3 sm:p-4 bg-gray-50 rounded-lg mb-4 sm:mb-6">
               {book.coverImageUrl ? (
                 <img
                   src={book.coverImageUrl}
                   alt={book.title}
-                  className="w-20 h-30 rounded shadow-sm object-cover flex-shrink-0"
+                  className="w-16 h-24 sm:w-20 sm:h-30 rounded shadow-sm object-cover flex-shrink-0"
                 />
               ) : (
-                <div className="w-20 h-30 bg-gray-200 rounded flex items-center justify-center flex-shrink-0">
-                  <span className="text-4xl">📚</span>
+                <div className="w-16 h-24 sm:w-20 sm:h-30 bg-gray-200 rounded flex items-center justify-center flex-shrink-0">
+                  <span className="text-3xl sm:text-4xl">📚</span>
                 </div>
               )}
               <div className="flex-1 min-w-0">
-                <h2 className="font-bold text-xl text-gray-900 mb-1">
+                <h2 className="font-bold text-base sm:text-xl text-gray-900 mb-1 line-clamp-2">
                   {book.title}
                 </h2>
-                <p className="text-gray-600">{book.author}</p>
+                <p className="text-sm sm:text-base text-gray-600 truncate">{book.author}</p>
               </div>
             </div>
           )}
 
           {/* Review Header */}
-          <div className="flex items-start gap-4 mb-6">
+          <div className="flex items-start gap-3 sm:gap-4 mb-4 sm:mb-6">
             <div className="flex-shrink-0">
               {review.user.image ? (
                 <img
                   src={review.user.image}
                   alt={review.user.name || "User"}
-                  className="w-16 h-16 rounded-full object-cover border-2 border-gray-200"
+                  className="w-12 h-12 sm:w-16 sm:h-16 rounded-full object-cover border-2 border-gray-200"
                   onError={(e) => {
                     e.currentTarget.style.display = 'none';
                     const fallback = e.currentTarget.nextElementSibling as HTMLElement;
@@ -416,47 +416,47 @@ export default function ReviewDetailPage() {
                 />
               ) : null}
               <div
-                className="w-16 h-16 bg-primary-200 rounded-full flex items-center justify-center"
+                className="w-12 h-12 sm:w-16 sm:h-16 bg-primary-200 rounded-full flex items-center justify-center"
                 style={{ display: review.user.image ? 'none' : 'flex' }}
               >
-                <span className="text-primary font-semibold text-2xl">
+                <span className="text-primary font-semibold text-lg sm:text-2xl">
                   {review.user.name?.[0]?.toUpperCase() || "U"}
                 </span>
               </div>
             </div>
 
-            <div className="flex-1">
-              <div className="flex items-center gap-4 mb-3">
-                <h1 className="text-2xl font-bold text-gray-900">
+            <div className="flex-1 min-w-0">
+              <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 mb-2 sm:mb-3">
+                <h1 className="text-lg sm:text-2xl font-bold text-gray-900">
                   {review.user.name || "匿名ユーザー"}のレビュー
                 </h1>
-                {!isOwner && <FollowButton userId={review.userId} />}
+                {!isOwner && <FollowButton userId={review.userId} variant="compact" />}
               </div>
 
-              <UserStats userId={review.userId} className="mb-3" />
+              <UserStats userId={review.userId} className="mb-2 sm:mb-3" />
 
-              <div className="flex items-center gap-4 mb-2">
+              <div className="flex flex-wrap items-center gap-2 sm:gap-4 mb-2">
                 {/* Star Rating */}
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1 sm:gap-2">
                   <div className="flex">
                     {[...Array(5)].map((_, i) => (
                       <span
                         key={i}
                         className={
-                          i < review.rating ? "text-accent text-2xl" : "text-gray-300 text-2xl"
+                          i < review.rating ? "text-accent text-lg sm:text-2xl" : "text-gray-300 text-lg sm:text-2xl"
                         }
                       >
                         ★
                       </span>
                     ))}
                   </div>
-                  <span className="text-lg font-semibold text-gray-700">
+                  <span className="text-base sm:text-lg font-semibold text-gray-700">
                     {review.rating}.0
                   </span>
                 </div>
 
                 {/* Date */}
-                <span className="text-sm text-gray-500">
+                <span className="text-xs sm:text-sm text-gray-500">
                   {new Date(review.createdAt).toLocaleDateString("ja-JP", {
                     year: "numeric",
                     month: "long",
@@ -478,15 +478,15 @@ export default function ReviewDetailPage() {
           </div>
 
           {/* Review Content */}
-          <div className="prose max-w-none mb-6">
-            <p className="text-gray-700 text-lg leading-relaxed whitespace-pre-line">
+          <div className="prose max-w-none mb-4 sm:mb-6">
+            <p className="text-gray-700 text-sm sm:text-lg leading-relaxed whitespace-pre-line">
               {review.content}
             </p>
           </div>
 
           {/* Read Completion Date */}
           {review.readCompletedDate && (
-            <div className="flex items-center gap-2 text-sm text-gray-500 mb-6">
+            <div className="flex items-center gap-2 text-xs sm:text-sm text-gray-500 mb-4 sm:mb-6">
               <span>📖</span>
               <span>
                 読了日:{" "}
@@ -503,17 +503,17 @@ export default function ReviewDetailPage() {
           )}
 
           {/* Like Button */}
-          <div className="flex items-center gap-6 pt-6 border-t border-gray-100">
+          <div className="flex items-center gap-3 sm:gap-6 pt-4 sm:pt-6 border-t border-gray-100">
             <button
               onClick={handleLikeToggle}
               disabled={addLike.isPending || removeLike.isPending}
-              className={`flex items-center gap-2 px-6 py-3 rounded-lg font-medium transition disabled:opacity-50 ${
+              className={`flex items-center gap-2 px-4 py-2 sm:px-6 sm:py-3 rounded-lg text-sm sm:text-base font-medium transition disabled:opacity-50 ${
                 isLiked
                   ? "bg-red-50 text-red-600 hover:bg-red-100"
                   : "bg-gray-50 text-gray-700 hover:bg-gray-100"
               }`}
             >
-              <span className="text-2xl">{isLiked ? "❤️" : "🤍"}</span>
+              <span className="text-lg sm:text-2xl">{isLiked ? "❤️" : "🤍"}</span>
               <span>{likeCount || 0} いいね</span>
             </button>
           </div>
@@ -536,42 +536,42 @@ export default function ReviewDetailPage() {
         </div>
 
         {/* Comments Section */}
-        <div className="bg-white rounded-xl shadow-lg p-8">
-          <h2 className="text-2xl font-bold text-primary mb-6">
+        <div className="bg-white rounded-xl shadow-lg p-4 sm:p-8">
+          <h2 className="text-xl sm:text-2xl font-bold text-primary mb-4 sm:mb-6">
             コメント ({comments?.length || 0})
           </h2>
 
           {/* Comment Form */}
           {session ? (
-            <form onSubmit={handleCommentSubmit} className="mb-8">
+            <form onSubmit={handleCommentSubmit} className="mb-6 sm:mb-8">
               <textarea
                 value={commentContent}
                 onChange={(e) => setCommentContent(e.target.value)}
                 placeholder="コメントを入力..."
                 rows={3}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary resize-none"
+                className="w-full px-3 py-2 sm:px-4 sm:py-3 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary resize-none"
                 disabled={isSubmittingComment}
               />
-              <div className="flex justify-end mt-3">
+              <div className="flex justify-end mt-2 sm:mt-3">
                 <button
                   type="submit"
                   disabled={
                     isSubmittingComment || commentContent.trim().length === 0
                   }
-                  className="bg-primary text-white px-6 py-2 rounded-lg font-semibold hover:bg-primary-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="bg-primary text-white px-4 py-2 sm:px-6 text-sm sm:text-base rounded-lg font-semibold hover:bg-primary-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {isSubmittingComment ? "投稿中..." : "コメントする"}
                 </button>
               </div>
             </form>
           ) : (
-            <div className="mb-8 p-6 bg-gray-50 rounded-lg text-center">
-              <p className="text-gray-600 mb-3">
+            <div className="mb-6 sm:mb-8 p-4 sm:p-6 bg-gray-50 rounded-lg text-center">
+              <p className="text-sm sm:text-base text-gray-600 mb-2 sm:mb-3">
                 コメントするにはログインが必要です
               </p>
               <Link
                 href="/"
-                className="text-primary hover:underline font-semibold"
+                className="text-sm sm:text-base text-primary hover:underline font-semibold"
               >
                 ログインする
               </Link>
@@ -597,20 +597,20 @@ export default function ReviewDetailPage() {
               ))}
             </div>
           ) : comments && comments.length > 0 ? (
-            <div className="space-y-4">
+            <div className="space-y-3 sm:space-y-4">
               {comments.map((comment) => (
                 <div
                   key={comment.id}
-                  className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition"
+                  className="border border-gray-200 rounded-lg p-3 sm:p-4 hover:shadow-md transition"
                 >
-                  <div className="flex gap-3">
+                  <div className="flex gap-2 sm:gap-3">
                     {/* User Avatar */}
                     <div className="flex-shrink-0">
                       {comment.user.image ? (
                         <img
                           src={comment.user.image}
                           alt={comment.user.name || "User"}
-                          className="w-10 h-10 rounded-full object-cover border-2 border-gray-200"
+                          className="w-8 h-8 sm:w-10 sm:h-10 rounded-full object-cover border-2 border-gray-200"
                           onError={(e) => {
                             e.currentTarget.style.display = 'none';
                             const fallback = e.currentTarget.nextElementSibling as HTMLElement;
@@ -619,10 +619,10 @@ export default function ReviewDetailPage() {
                         />
                       ) : null}
                       <div
-                        className="w-10 h-10 bg-primary-200 rounded-full flex items-center justify-center"
+                        className="w-8 h-8 sm:w-10 sm:h-10 bg-primary-200 rounded-full flex items-center justify-center"
                         style={{ display: comment.user.image ? 'none' : 'flex' }}
                       >
-                        <span className="text-primary font-semibold">
+                        <span className="text-primary font-semibold text-sm sm:text-base">
                           {comment.user.name?.[0]?.toUpperCase() || "U"}
                         </span>
                       </div>
@@ -630,11 +630,11 @@ export default function ReviewDetailPage() {
 
                     {/* Comment Content */}
                     <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-3 mb-2">
-                        <span className="font-semibold text-gray-900">
+                      <div className="flex flex-wrap items-center gap-2 sm:gap-3 mb-1 sm:mb-2">
+                        <span className="font-semibold text-sm sm:text-base text-gray-900">
                           {comment.user.name || "匿名ユーザー"}
                         </span>
-                        <span className="text-sm text-gray-500">
+                        <span className="text-xs sm:text-sm text-gray-500">
                           {new Date(comment.createdAt).toLocaleDateString(
                             "ja-JP",
                             {
@@ -649,13 +649,13 @@ export default function ReviewDetailPage() {
                         {session?.user?.id === comment.userId && (
                           <button
                             onClick={() => handleDeleteComment(comment.id)}
-                            className="text-sm text-red-600 hover:underline ml-auto"
+                            className="text-xs sm:text-sm text-red-600 hover:underline ml-auto"
                           >
                             削除
                           </button>
                         )}
                       </div>
-                      <p className="text-gray-700 whitespace-pre-line">
+                      <p className="text-sm sm:text-base text-gray-700 whitespace-pre-line">
                         {comment.content}
                       </p>
                     </div>

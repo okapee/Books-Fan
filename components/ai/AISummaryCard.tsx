@@ -139,17 +139,17 @@ export function AISummaryCard({
           )}
         </div>
       ) : (
-        <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
-          <div className="flex items-start justify-between">
-            <div>
+        <div className="bg-gray-50 rounded-lg p-3 sm:p-4 border border-gray-200">
+          <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
+            <div className="flex-1">
               <div className="flex items-center gap-2 mb-2">
-                <span className="text-lg">🤖</span>
-                <h4 className="font-semibold text-gray-900">AI要約</h4>
-                <span className="text-xs bg-purple-100 text-purple-700 px-2 py-1 rounded-full">
+                <span className="text-base sm:text-lg">🤖</span>
+                <h4 className="font-semibold text-sm sm:text-base text-gray-900">AI要約</h4>
+                <span className="text-xs bg-purple-100 text-purple-700 px-2 py-0.5 sm:py-1 rounded-full">
                   PREMIUM
                 </span>
               </div>
-              <p className="text-sm text-gray-600">
+              <p className="text-xs sm:text-sm text-gray-600">
                 {isPremiumUser
                   ? "このレビューのAI要約を生成できます"
                   : "プレミアム会員になるとAI要約を利用できます"}
@@ -160,10 +160,10 @@ export function AISummaryCard({
               <button
                 onClick={handleGenerate}
                 disabled={generateSummary.isPending || summaryLoading}
-                className="bg-purple-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-purple-700 transition disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+                className="w-full sm:w-auto bg-purple-600 text-white px-4 py-2 sm:py-2 rounded-lg font-semibold hover:bg-purple-700 transition disabled:opacity-50 disabled:cursor-not-allowed text-sm whitespace-nowrap"
               >
                 {generateSummary.isPending ? (
-                  <span className="flex items-center gap-2">
+                  <span className="flex items-center justify-center gap-2">
                     <span className="animate-spin">⏳</span>
                     生成中...
                   </span>
