@@ -38,7 +38,7 @@ async function main() {
 
   console.log("=== 完了 ===");
   console.log("3件のブログ記事を作成しました！");
-  console.log("\nブログ一覧: http://localhost:3000/blog");
+  console.log("\nブログ一覧: https://books-fan.com/blog");
 }
 
 // ヘルパー関数: 本を検索してDBに追加
@@ -186,12 +186,12 @@ async function createEnglishLearningPost(authorId: string) {
 
 ${
   validBooks[0]
-    ? `[![${validBooks[0].title}](${validBooks[0].coverImageUrl})](http://localhost:3000/books/${validBooks[0].googleBooksId})
+    ? `[![${validBooks[0].title}](${validBooks[0].coverImageUrl})](https://books-fan.com/books/${validBooks[0].googleBooksId})
 
-**[${validBooks[0].title}](http://localhost:3000/books/${validBooks[0].googleBooksId})**
+**[${validBooks[0].title}](https://books-fan.com/books/${validBooks[0].googleBooksId})**
 著者: ${validBooks[0].author}
 
-[📖 Books Fanでレビューを見る](http://localhost:3000/books/${validBooks[0].googleBooksId})
+[📖 Books Fanでレビューを見る](https://books-fan.com/books/${validBooks[0].googleBooksId})
 
 `
     : ""
@@ -212,12 +212,12 @@ ${
 
 ${
   validBooks[1]
-    ? `[![${validBooks[1].title}](${validBooks[1].coverImageUrl})](http://localhost:3000/books/${validBooks[1].googleBooksId})
+    ? `[![${validBooks[1].title}](${validBooks[1].coverImageUrl})](https://books-fan.com/books/${validBooks[1].googleBooksId})
 
-**[${validBooks[1].title}](http://localhost:3000/books/${validBooks[1].googleBooksId})**
+**[${validBooks[1].title}](https://books-fan.com/books/${validBooks[1].googleBooksId})**
 著者: ${validBooks[1].author}
 
-[📖 Books Fanでレビューを見る](http://localhost:3000/books/${validBooks[1].googleBooksId})
+[📖 Books Fanでレビューを見る](https://books-fan.com/books/${validBooks[1].googleBooksId})
 
 `
     : ""
@@ -240,12 +240,12 @@ ${
 
 ${
   validBooks[2]
-    ? `[![${validBooks[2].title}](${validBooks[2].coverImageUrl})](http://localhost:3000/books/${validBooks[2].googleBooksId})
+    ? `[![${validBooks[2].title}](${validBooks[2].coverImageUrl})](https://books-fan.com/books/${validBooks[2].googleBooksId})
 
-**[${validBooks[2].title}](http://localhost:3000/books/${validBooks[2].googleBooksId})**
+**[${validBooks[2].title}](https://books-fan.com/books/${validBooks[2].googleBooksId})**
 著者: ${validBooks[2].author}
 
-[📖 Books Fanでレビューを見る](http://localhost:3000/books/${validBooks[2].googleBooksId})
+[📖 Books Fanでレビューを見る](https://books-fan.com/books/${validBooks[2].googleBooksId})
 
 `
     : ""
@@ -287,11 +287,11 @@ A: 上記の3冊（計5,000円程度）で十分です。
 
 この3ヶ月プログラムを実践すれば、あなたも必ず英語が話せるようになります。
 
-📚 **Books Fanでもっと英語学習本を探す** → [本を探す](http://localhost:3000/books)
+📚 **Books Fanでもっと英語学習本を探す** → [本を探す](https://books-fan.com/books)
 
 ---
 
-*この記事で紹介した書籍のレビューは、[Books Fan](http://localhost:3000)でご覧いただけます。*
+*この記事で紹介した書籍のレビューは、[Books Fan](https://books-fan.com)でご覧いただけます。*
 `;
 
   const post = await prisma.blogPost.create({
@@ -399,12 +399,12 @@ async function createAIDevelopmentPost(authorId: string) {
 ${
   validBooks[2]
     ? `
-[![${validBooks[2].title}](${validBooks[2].coverImageUrl})](http://localhost:3000/books/${validBooks[2].googleBooksId})
+[![${validBooks[2].title}](${validBooks[2].coverImageUrl})](https://books-fan.com/books/${validBooks[2].googleBooksId})
 
-**[${validBooks[2].title}](http://localhost:3000/books/${validBooks[2].googleBooksId})**
+**[${validBooks[2].title}](https://books-fan.com/books/${validBooks[2].googleBooksId})**
 著者: ${validBooks[2].author}
 
-[📖 Books Fanでレビューを見る](http://localhost:3000/books/${validBooks[2].googleBooksId})
+[📖 Books Fanでレビューを見る](https://books-fan.com/books/${validBooks[2].googleBooksId})
 `
     : ""
 }
@@ -421,12 +421,12 @@ ${
 ${
   validBooks[1]
     ? `
-[![${validBooks[1].title}](${validBooks[1].coverImageUrl})](http://localhost:3000/books/${validBooks[1].googleBooksId})
+[![${validBooks[1].title}](${validBooks[1].coverImageUrl})](https://books-fan.com/books/${validBooks[1].googleBooksId})
 
-**[${validBooks[1].title}](http://localhost:3000/books/${validBooks[1].googleBooksId})**
+**[${validBooks[1].title}](https://books-fan.com/books/${validBooks[1].googleBooksId})**
 著者: ${validBooks[1].author}
 
-[📖 Books Fanでレビューを見る](http://localhost:3000/books/${validBooks[1].googleBooksId})
+[📖 Books Fanでレビューを見る](https://books-fan.com/books/${validBooks[1].googleBooksId})
 `
     : ""
 }
@@ -535,12 +535,12 @@ function calculateTotal(items: Item[]): number {
 ${
   validBooks[0]
     ? `
-[![${validBooks[0].title}](${validBooks[0].coverImageUrl})](http://localhost:3000/books/${validBooks[0].googleBooksId})
+[![${validBooks[0].title}](${validBooks[0].coverImageUrl})](https://books-fan.com/books/${validBooks[0].googleBooksId})
 
-**[${validBooks[0].title}](http://localhost:3000/books/${validBooks[0].googleBooksId})**
+**[${validBooks[0].title}](https://books-fan.com/books/${validBooks[0].googleBooksId})**
 著者: ${validBooks[0].author}
 
-[📖 Books Fanでレビューを見る](http://localhost:3000/books/${validBooks[0].googleBooksId})
+[📖 Books Fanでレビューを見る](https://books-fan.com/books/${validBooks[0].googleBooksId})
 `
     : ""
 }
@@ -553,11 +553,11 @@ AI時代の開発は、**ツールをどう使いこなすか**が勝負です�
 
 この記事で紹介したワークフローを実践すれば、あなたの開発生産性は確実に10倍になります。
 
-📚 **Books FanでもっとAI・プログラミング本を探す** → [本を探す](http://localhost:3000/books)
+📚 **Books FanでもっとAI・プログラミング本を探す** → [本を探す](https://books-fan.com/books)
 
 ---
 
-*紹介した書籍のレビューは、[Books Fan](http://localhost:3000)でご覧いただけます。*
+*紹介した書籍のレビューは、[Books Fan](https://books-fan.com)でご覧いただけます。*
 `;
 
   const post = await prisma.blogPost.create({
@@ -821,14 +821,14 @@ async function createDigitalNomadPost(authorId: string) {
 ${
   validBooks[0]
     ? `
-[![${validBooks[0].title}](${validBooks[0].coverImageUrl})](http://localhost:3000/books/${validBooks[0].googleBooksId})
+[![${validBooks[0].title}](${validBooks[0].coverImageUrl})](https://books-fan.com/books/${validBooks[0].googleBooksId})
 
-**[${validBooks[0].title}](http://localhost:3000/books/${validBooks[0].googleBooksId})**
+**[${validBooks[0].title}](https://books-fan.com/books/${validBooks[0].googleBooksId})**
 著者: ${validBooks[0].author}
 
 海外移住の実務的な情報（ビザ、税金、保険など）が網羅されています。
 
-[📖 Books Fanでレビューを見る](http://localhost:3000/books/${validBooks[0].googleBooksId})
+[📖 Books Fanでレビューを見る](https://books-fan.com/books/${validBooks[0].googleBooksId})
 `
     : ""
 }
@@ -847,14 +847,14 @@ ${
 ${
   validBooks[1]
     ? `
-[![${validBooks[1].title}](${validBooks[1].coverImageUrl})](http://localhost:3000/books/${validBooks[1].googleBooksId})
+[![${validBooks[1].title}](${validBooks[1].coverImageUrl})](https://books-fan.com/books/${validBooks[1].googleBooksId})
 
-**[${validBooks[1].title}](http://localhost:3000/books/${validBooks[1].googleBooksId})**
+**[${validBooks[1].title}](https://books-fan.com/books/${validBooks[1].googleBooksId})**
 著者: ${validBooks[1].author}
 
 ノマドワーカーの生活の魅力と現実が率直に書かれています。
 
-[📖 Books Fanでレビューを見る](http://localhost:3000/books/${validBooks[1].googleBooksId})
+[📖 Books Fanでレビューを見る](https://books-fan.com/books/${validBooks[1].googleBooksId})
 `
     : ""
 }
@@ -882,11 +882,11 @@ A: 都市によりますが、この記事で紹介した7カ国は比較的安�
 
 それだけで、あなたの世界は確実に変わります。
 
-📚 **Books Fanで旅・海外移住の本を探す** → [本を探す](http://localhost:3000/books)
+📚 **Books Fanで旅・海外移住の本を探す** → [本を探す](https://books-fan.com/books)
 
 ---
 
-*紹介した書籍のレビューは、[Books Fan](http://localhost:3000)でご覧いただけます。*
+*紹介した書籍のレビューは、[Books Fan](https://books-fan.com)でご覧いただけます。*
 `;
 
   const post = await prisma.blogPost.create({
