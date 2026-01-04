@@ -31,7 +31,8 @@ export interface GoogleBooksSearchResponse {
 // Google Books APIから本を検索
 export async function searchBooks(
   query: string,
-  maxResults: number = 20
+  maxResults: number = 20,
+  startIndex: number = 0
 ): Promise<GoogleBooksSearchResponse> {
   const apiKey = process.env.GOOGLE_BOOKS_API_KEY;
 
@@ -40,7 +41,7 @@ export async function searchBooks(
 
   const url = `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(
     query
-  )}&maxResults=${maxResults}&langRestrict=ja${apiKeyParam}`;
+  )}&maxResults=${maxResults}&startIndex=${startIndex}&langRestrict=ja${apiKeyParam}`;
 
   try {
     const response = await fetch(url);

@@ -15,10 +15,11 @@ export const bookRouter = router({
       z.object({
         query: z.string().min(1),
         maxResults: z.number().optional().default(20),
+        startIndex: z.number().optional().default(0),
       })
     )
     .query(async ({ input }) => {
-      const data = await searchBooks(input.query, input.maxResults);
+      const data = await searchBooks(input.query, input.maxResults, input.startIndex);
 
       return {
         totalItems: data.totalItems,
