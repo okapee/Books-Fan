@@ -348,6 +348,13 @@ export const userRouter = router({
 
       // トランザクション内で関連データをすべて削除
       await prisma.$transaction(async (tx) => {
+        // このユーザーのレビューが影響する本のIDを取得
+        const affectedReviews = await tx.review.findMany({
+          where: { userId },
+          select: { bookId: true },
+        });
+        const affectedBookIds = [...new Set(affectedReviews.map((r) => r.bookId))];
+
         // ユーザーに関連するデータを削除
         await tx.reviewLike.deleteMany({ where: { userId } });
         await tx.reviewComment.deleteMany({ where: { userId } });
@@ -357,6 +364,23 @@ export const userRouter = router({
         await tx.aISummary.deleteMany({ where: { userId } });
         await tx.notification.deleteMany({ where: { OR: [{ receiverId: userId }, { senderId: userId }] } });
         await tx.follow.deleteMany({ where: { OR: [{ followerId: userId }, { followingId: userId }] } });
+
+        // 影響を受けた本のレビュー数と平均評価を再計算
+        for (const bookId of affectedBookIds) {
+          const avgRating = await tx.review.aggregate({
+            where: { bookId },
+            _avg: { rating: true },
+            _count: true,
+          });
+
+          await tx.book.update({
+            where: { id: bookId },
+            data: {
+              averageRating: avgRating._avg.rating || 0,
+              reviewCount: avgRating._count,
+            },
+          });
+        }
 
         // 最後にユーザー自体を削除
         await tx.user.delete({ where: { id: userId } });
