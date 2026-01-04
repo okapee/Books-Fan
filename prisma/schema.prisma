@@ -57,6 +57,7 @@ model User {
   image         String?
   bio           String?
 
+  role           UserRole       @default(USER)
   membershipType MembershipType @default(FREE)
 
   // 企業アカウント
@@ -111,6 +112,9 @@ model User {
   // 読書記録
   readingStatuses ReadingStatus[]
   readingSessions ReadingSession[]
+
+  // ブログ
+  blogPosts    BlogPost[]
 
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
@@ -181,6 +185,9 @@ model Book {
   // 読書記録
   readingStatuses ReadingStatus[]
   readingSessions ReadingSession[]
+
+  // ブログ
+  blogPostBooks   BlogPostBook[]
 
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
@@ -328,6 +335,12 @@ enum MembershipType {
   CORPORATE
 }
 
+// Enum: ユーザーロール
+enum UserRole {
+  USER
+  ADMIN
+}
+
 // Enum: サブスクリプションステータス
 enum SubscriptionStatus {
   NONE
@@ -444,4 +457,62 @@ model ReadingSession {
   @@index([userId, bookId])
   @@index([createdAt])
   @@index([userId, createdAt])
+}
+
+// ブログ記事
+model BlogPost {
+  id          String   @id @default(cuid())
+  title       String   // 記事タイトル
+  slug        String   @unique // URL用スラッグ（SEO対応）
+  excerpt     String   @db.Text // 抜粋・要約
+  content     String   @db.Text // 本文（Markdown形式）
+  coverImage  String?  // アイキャッチ画像URL
+
+  // SEO
+  metaTitle       String? // SEO用タイトル（指定がない場合はtitleを使用）
+  metaDescription String? @db.Text // SEO用description
+
+  // 著者・公開設定
+  authorId    String
+  author      User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  isPublished Boolean  @default(false) // 公開フラグ
+  publishedAt DateTime? // 公開日時
+
+  // カテゴリとタグ
+  category    String   // カテゴリ（例: "英語学習", "読書術", "ビジネス"）
+  tags        String[] @default([]) // タグ
+
+  // 関連する本（Books Fanへの誘導）
+  relatedBooks BlogPostBook[]
+
+  // 統計
+  viewCount   Int      @default(0) // 閲覧数
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([authorId])
+  @@index([slug])
+  @@index([category])
+  @@index([isPublished, publishedAt])
+  @@index([createdAt])
+}
+
+// ブログ記事と本の関連テーブル
+model BlogPostBook {
+  id         String   @id @default(cuid())
+  blogPostId String
+  bookId     String
+  order      Int      @default(0) // 表示順序
+  note       String?  @db.Text // この本を紹介する理由・コメント
+
+  blogPost   BlogPost @relation(fields: [blogPostId], references: [id], onDelete: Cascade)
+  book       Book     @relation(fields: [bookId], references: [id], onDelete: Cascade)
+
+  createdAt  DateTime @default(now())
+
+  @@unique([blogPostId, bookId])
+  @@index([blogPostId])
+  @@index([bookId])
 }

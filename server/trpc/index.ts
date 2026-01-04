@@ -10,6 +10,7 @@ import { discoveryRouter } from "./routers/discovery";
 import { companyRouter } from "./routers/company";
 import { contactRouter } from "./routers/contact";
 import { readingRouter } from "./routers/reading";
+import { blogRouter } from "./routers/blog";
 
 export const appRouter = router({
   book: bookRouter,
@@ -23,6 +24,7 @@ export const appRouter = router({
   company: companyRouter,
   contact: contactRouter,
   reading: readingRouter,
+  blog: blogRouter,
 });
 
 export type AppRouter = typeof appRouter;

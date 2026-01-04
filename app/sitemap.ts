@@ -19,6 +19,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.9,
     },
     {
+      url: `${siteUrl}/blog`,
+      lastModified: new Date(),
+      changeFrequency: "daily",
+      priority: 0.9,
+    },
+    {
       url: `${siteUrl}/pricing`,
       lastModified: new Date(),
       changeFrequency: "monthly",
@@ -96,7 +102,26 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.7,
     }));
 
-    return [...staticPages, ...bookPages, ...categoryPages];
+    // ブログ記事（公開済みのみ）
+    const blogPosts = await prisma.blogPost.findMany({
+      where: { isPublished: true },
+      select: {
+        slug: true,
+        updatedAt: true,
+        publishedAt: true,
+      },
+      orderBy: { publishedAt: "desc" },
+      take: 1000,
+    });
+
+    const blogPages: MetadataRoute.Sitemap = blogPosts.map((post) => ({
+      url: `${siteUrl}/blog/${post.slug}`,
+      lastModified: post.updatedAt,
+      changeFrequency: "weekly",
+      priority: 0.8,
+    }));
+
+    return [...staticPages, ...bookPages, ...categoryPages, ...blogPages];
   } catch (error) {
     console.error("Error generating sitemap:", error);
     // エラーが発生した場合は静的ページのみ返す

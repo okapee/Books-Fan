@@ -32,6 +32,12 @@ export function Header() {
             >
               本を探す
             </Link>
+            <Link
+              href="/blog"
+              className="text-gray-700 hover:text-primary transition"
+            >
+              ブログ
+            </Link>
             {session && (
               <>
                 <Link
@@ -191,6 +197,13 @@ export function Header() {
               className="block px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg transition"
             >
               📚 本を探す
+            </Link>
+            <Link
+              href="/blog"
+              onClick={() => setMobileMenuOpen(false)}
+              className="block px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg transition"
+            >
+              📝 ブログ
             </Link>
             <Link
               href="/reading"
