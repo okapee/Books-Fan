@@ -8,6 +8,8 @@ import Link from "next/link";
 import { BookCard } from "@/components/book/BookCard";
 import { BlogCard } from "@/components/blog/BlogCard";
 import ReactMarkdown from "react-markdown";
+import Head from "next/head";
+import { useEffect } from "react";
 
 export default function BlogPostPage() {
   const params = useParams();
@@ -18,6 +20,87 @@ export default function BlogPostPage() {
     { slug, limit: 3 },
     { enabled: !!post }
   );
+
+  // メタタグを動的に更新
+  useEffect(() => {
+    if (post) {
+      document.title = `${post.title} | Books Fan`;
+
+      // OGP meta tags
+      const metaTags = [
+        { property: 'og:title', content: post.title },
+        { property: 'og:description', content: post.excerpt },
+        { property: 'og:image', content: post.coverImage || '/og-image.png' },
+        { property: 'og:url', content: `${window.location.origin}/blog/${slug}` },
+        { property: 'og:type', content: 'article' },
+        { name: 'description', content: post.excerpt },
+        { name: 'keywords', content: post.tags?.join(', ') || '' },
+        { name: 'author', content: post.author.name || 'Books Fan' },
+        { property: 'article:published_time', content: post.publishedAt },
+        { property: 'article:modified_time', content: post.updatedAt },
+        { property: 'article:author', content: post.author.name || 'Books Fan' },
+        { property: 'article:section', content: post.category },
+        { name: 'twitter:card', content: 'summary_large_image' },
+        { name: 'twitter:title', content: post.title },
+        { name: 'twitter:description', content: post.excerpt },
+        { name: 'twitter:image', content: post.coverImage || '/og-image.png' },
+      ];
+
+      metaTags.forEach(({ property, name, content }) => {
+        const selector = property ? `meta[property="${property}"]` : `meta[name="${name}"]`;
+        let meta = document.querySelector(selector) as HTMLMetaElement;
+
+        if (!meta) {
+          meta = document.createElement('meta');
+          if (property) meta.setAttribute('property', property);
+          if (name) meta.setAttribute('name', name);
+          document.head.appendChild(meta);
+        }
+
+        meta.content = content;
+      });
+
+      // Canonical URL
+      let canonical = document.querySelector('link[rel="canonical"]') as HTMLLinkElement;
+      if (!canonical) {
+        canonical = document.createElement('link');
+        canonical.rel = 'canonical';
+        document.head.appendChild(canonical);
+      }
+      canonical.href = `${window.location.origin}/blog/${slug}`;
+    }
+  }, [post, slug]);
+
+  // 構造化データ（JSON-LD）
+  const structuredData = post ? {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": post.title,
+    "description": post.excerpt,
+    "image": post.coverImage || `${typeof window !== 'undefined' ? window.location.origin : ''}/og-image.png`,
+    "datePublished": post.publishedAt,
+    "dateModified": post.updatedAt,
+    "author": {
+      "@type": "Person",
+      "name": post.author.name || "Books Fan",
+      "url": `${typeof window !== 'undefined' ? window.location.origin : ''}/profile/${post.author.id}`
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "Books Fan",
+      "logo": {
+        "@type": "ImageObject",
+        "url": `${typeof window !== 'undefined' ? window.location.origin : ''}/icon.svg`
+      }
+    },
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": `${typeof window !== 'undefined' ? window.location.origin : ''}/blog/${slug}`
+    },
+    "keywords": post.tags?.join(", "),
+    "articleSection": post.category,
+    "wordCount": post.content.split(/\s+/).length,
+  } : null;
 
   if (isLoading) {
     return (
@@ -58,6 +141,14 @@ export default function BlogPostPage() {
 
   return (
     <div className="min-h-screen bg-gray-50 py-6 sm:py-12">
+      {/* 構造化データ */}
+      {structuredData && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+        />
+      )}
+
       <div className="container mx-auto px-3 sm:px-4 max-w-4xl">
         {/* パンくず */}
         <div className="mb-4 sm:mb-6 flex items-center gap-2 text-xs sm:text-sm text-gray-600">
