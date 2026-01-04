@@ -124,6 +124,9 @@ export const bookRouter = router({
     )
     .query(async ({ input }) => {
       const books = await prisma.book.findMany({
+        where: {
+          reviewCount: { gt: 0 }, // レビューが1件以上ある本のみ
+        },
         orderBy: {
           reviewCount: "desc",
         },

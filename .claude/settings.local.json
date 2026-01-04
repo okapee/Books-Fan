@@ -39,7 +39,8 @@
       "Bash(git config:*)",
       "Bash(find:*)",
       "Bash(wait)",
-      "Bash(npx pwa-asset-generator:*)"
+      "Bash(npx pwa-asset-generator:*)",
+      "Bash(npx tsx:*)"
     ],
     "deny": [],
     "ask": []
