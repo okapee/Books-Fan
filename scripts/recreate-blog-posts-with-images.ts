@@ -45,12 +45,24 @@ async function main() {
 async function findOrCreateBook(query: string, rating: number = 4.5) {
   try {
     const result = await searchBooks(query, 1);
-    if (result.books.length === 0) {
+    if (!result.items || result.items.length === 0) {
       console.log(`  ⚠️  本が見つかりません: ${query}`);
       return null;
     }
 
-    const bookData = result.books[0];
+    const volume = result.items[0];
+    const bookData = {
+      googleBooksId: volume.id,
+      title: volume.volumeInfo.title,
+      author: volume.volumeInfo.authors?.join(", ") || "不明",
+      description: volume.volumeInfo.description || null,
+      coverImageUrl: volume.volumeInfo.imageLinks?.thumbnail || null,
+      publisher: volume.volumeInfo.publisher || null,
+      publishedDate: volume.volumeInfo.publishedDate || null,
+      pageCount: volume.volumeInfo.pageCount || null,
+      categories: volume.volumeInfo.categories || [],
+      isbn: volume.volumeInfo.industryIdentifiers?.find(id => id.type === "ISBN_13")?.identifier || null,
+    };
 
     // 既にDBにあるかチェック
     let book = await prisma.book.findUnique({
@@ -71,7 +83,6 @@ async function findOrCreateBook(query: string, rating: number = 4.5) {
           pageCount: bookData.pageCount,
           categories: bookData.categories,
           isbn: bookData.isbn,
-          language: bookData.language,
         },
       });
       console.log(`  ✓ 書籍を追加: ${book.title}`);

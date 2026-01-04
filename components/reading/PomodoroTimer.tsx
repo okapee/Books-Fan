@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { trpc } from "@/lib/trpc";
 
 interface PomodoroTimerProps {
@@ -41,24 +41,7 @@ export function PomodoroTimer({
     };
   }, []);
 
-  // タイマーロジック
-  useEffect(() => {
-    if (isRunning && timeLeft > 0) {
-      intervalRef.current = setInterval(() => {
-        setTimeLeft((prev) => prev - 1);
-      }, 1000);
-    } else if (timeLeft === 0) {
-      handlePhaseComplete();
-    }
-
-    return () => {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-      }
-    };
-  }, [isRunning, timeLeft]);
-
-  const handlePhaseComplete = () => {
+  const handlePhaseComplete = useCallback(() => {
     setIsRunning(false);
 
     if (phase === "work") {
@@ -76,7 +59,24 @@ export function PomodoroTimer({
       setTimeLeft(25 * 60);
       setSessionId(null);
     }
-  };
+  }, [phase, sessionId, completeSession]);
+
+  // タイマーロジック
+  useEffect(() => {
+    if (isRunning && timeLeft > 0) {
+      intervalRef.current = setInterval(() => {
+        setTimeLeft((prev) => prev - 1);
+      }, 1000);
+    } else if (timeLeft === 0) {
+      handlePhaseComplete();
+    }
+
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+    };
+  }, [isRunning, timeLeft, handlePhaseComplete]);
 
   const handleStart = () => {
     if (phase === "work" && !sessionId) {

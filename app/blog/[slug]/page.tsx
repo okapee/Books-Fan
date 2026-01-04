@@ -152,24 +152,30 @@ export default function BlogPostPage() {
             </div>
 
             {/* 記事本文（Markdown） */}
-            <div className="prose prose-sm sm:prose-lg max-w-none
-              prose-headings:font-bold prose-headings:mt-12 prose-headings:mb-6
-              prose-h1:text-3xl sm:prose-h1:text-4xl prose-h1:mt-16 prose-h1:mb-8 prose-h1:leading-tight
-              prose-h2:text-2xl sm:prose-h2:text-3xl prose-h2:mt-12 prose-h2:mb-6 prose-h2:leading-snug
-              prose-h3:text-xl sm:prose-h3:text-2xl prose-h3:mt-10 prose-h3:mb-5
-              prose-h4:text-lg sm:prose-h4:text-xl prose-h4:mt-8 prose-h4:mb-4
-              prose-p:text-base sm:prose-p:text-lg prose-p:leading-relaxed prose-p:mb-6 prose-p:mt-0
-              prose-li:text-base sm:prose-li:text-lg prose-li:leading-relaxed prose-li:my-2
-              prose-ul:my-8 prose-ol:my-8
+            <div className="prose prose-sm sm:prose-xl max-w-none
+              prose-headings:font-bold prose-headings:mt-16 prose-headings:mb-10
+              prose-h1:text-4xl sm:prose-h1:text-5xl prose-h1:mt-20 prose-h1:mb-12 prose-h1:leading-tight
+              prose-h2:text-3xl sm:prose-h2:text-4xl prose-h2:mt-16 prose-h2:mb-10 prose-h2:leading-snug
+              prose-h3:text-2xl sm:prose-h3:text-3xl prose-h3:mt-14 prose-h3:mb-8
+              prose-h4:text-xl sm:prose-h4:text-2xl prose-h4:mt-12 prose-h4:mb-6
+              prose-p:text-lg sm:prose-p:text-xl prose-p:leading-loose prose-p:mb-10 prose-p:mt-0
+              prose-li:text-lg sm:prose-li:text-xl prose-li:leading-loose prose-li:my-4 prose-li:mb-6
+              prose-ul:my-12 prose-ul:space-y-4 prose-ol:my-12 prose-ol:space-y-4
               prose-a:text-purple-600 prose-a:font-semibold prose-a:no-underline hover:prose-a:underline
-              prose-img:rounded-xl prose-img:shadow-lg prose-img:my-10
-              prose-blockquote:border-l-4 prose-blockquote:border-purple-500 prose-blockquote:pl-6 prose-blockquote:my-8 prose-blockquote:italic
-              prose-code:bg-gray-100 prose-code:px-2 prose-code:py-1 prose-code:rounded prose-code:text-sm
-              prose-pre:bg-gray-900 prose-pre:text-gray-100 prose-pre:p-6 prose-pre:rounded-xl prose-pre:my-8
-              prose-hr:my-12 prose-hr:border-gray-300
+              prose-img:rounded-xl prose-img:shadow-lg prose-img:my-16
+              prose-blockquote:border-l-4 prose-blockquote:border-purple-500 prose-blockquote:pl-6 prose-blockquote:my-12 prose-blockquote:italic
+              prose-code:bg-gray-100 prose-code:px-2 prose-code:py-1 prose-code:rounded prose-code:text-base
+              prose-pre:bg-gray-900 prose-pre:text-gray-100 prose-pre:p-6 prose-pre:rounded-xl prose-pre:my-12
+              prose-hr:my-16 prose-hr:border-gray-300
               prose-strong:font-bold prose-strong:text-gray-900
               prose-em:italic prose-em:text-gray-700
-              leading-loose">
+              leading-loose
+              [&>*]:mb-8
+              [&>h2]:!mt-20
+              [&>h3]:!mt-16
+              [&>ul]:!mb-12
+              [&>ol]:!mb-12
+              [&>p]:!mb-10">
               <ReactMarkdown>{post.content}</ReactMarkdown>
             </div>
 
