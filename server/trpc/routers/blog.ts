@@ -334,4 +334,48 @@ export const blogRouter = router({
 
       return post;
     }),
+
+  // 管理者用: 記事を削除
+  delete: publicProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(async ({ input, ctx }) => {
+      if (!ctx.session?.user?.id) {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "ログインが必要です",
+        });
+      }
+
+      // 記事の所有者確認
+      const post = await prisma.blogPost.findUnique({
+        where: { id: input.id },
+        select: { authorId: true },
+      });
+
+      if (!post) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "ブログ記事が見つかりません",
+        });
+      }
+
+      if (post.authorId !== ctx.session.user.id) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "この記事を削除する権限がありません",
+        });
+      }
+
+      // 関連書籍のリレーションを先に削除
+      await prisma.blogPostBook.deleteMany({
+        where: { blogPostId: input.id },
+      });
+
+      // ブログ記事を削除
+      await prisma.blogPost.delete({
+        where: { id: input.id },
+      });
+
+      return { success: true };
+    }),
 });

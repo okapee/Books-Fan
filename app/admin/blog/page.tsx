@@ -9,8 +9,17 @@ import { ja } from "date-fns/locale";
 
 export default function AdminBlogPage() {
   const router = useRouter();
+  const utils = trpc.useContext();
   const { data: posts, isLoading } = trpc.blog.getMyPosts.useQuery();
-  const deleteMutation = trpc.blog.update.useMutation();
+  const deleteMutation = trpc.blog.delete.useMutation({
+    onSuccess: () => {
+      // キャッシュを無効化してリストを再取得
+      utils.blog.getMyPosts.invalidate();
+    },
+    onError: (error) => {
+      alert(`削除に失敗しました: ${error.message}`);
+    },
+  });
 
   const [filter, setFilter] = useState<"all" | "published" | "draft">("all");
 
@@ -21,14 +30,14 @@ export default function AdminBlogPage() {
   });
 
   const handleDelete = async (id: string) => {
-    if (!confirm("本当に削除しますか？")) return;
+    if (!confirm("本当に削除しますか？この操作は取り消せません。")) return;
 
-    // Note: We should add a delete endpoint in the blog router
-    // For now, we'll unpublish it
-    await deleteMutation.mutateAsync({
-      id,
-      isPublished: false,
-    });
+    try {
+      await deleteMutation.mutateAsync({ id });
+      alert("記事を削除しました");
+    } catch (error) {
+      console.error("削除エラー:", error);
+    }
   };
 
   return (
@@ -208,9 +217,10 @@ export default function AdminBlogPage() {
                       </Link>
                       <button
                         onClick={() => handleDelete(post.id)}
-                        className="bg-red-50 text-red-600 px-4 py-2 rounded-lg font-semibold hover:bg-red-100 transition text-sm"
+                        disabled={deleteMutation.isPending}
+                        className="bg-red-50 text-red-600 px-4 py-2 rounded-lg font-semibold hover:bg-red-100 transition text-sm disabled:opacity-50 disabled:cursor-not-allowed"
                       >
-                        削除
+                        {deleteMutation.isPending ? "削除中..." : "削除"}
                       </button>
                     </div>
                   </div>

@@ -58,6 +58,14 @@ export function Header() {
                 >
                   ダッシュボード
                 </Link>
+                {(session.user as any).role === "ADMIN" && (
+                  <Link
+                    href="/admin"
+                    className="text-purple-600 hover:text-purple-700 font-semibold transition"
+                  >
+                    管理者
+                  </Link>
+                )}
               </>
             )}
           </nav>
@@ -233,6 +241,15 @@ export function Header() {
                 className="block px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg transition"
               >
                 🏢 企業ダッシュボード
+              </Link>
+            )}
+            {(session.user as any).role === "ADMIN" && (
+              <Link
+                href="/admin"
+                onClick={() => setMobileMenuOpen(false)}
+                className="block px-4 py-3 text-purple-600 font-semibold hover:bg-purple-50 rounded-lg transition"
+              >
+                ⚙️ 管理者ダッシュボード
               </Link>
             )}
             <button
