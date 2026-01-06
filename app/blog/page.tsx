@@ -12,7 +12,7 @@ export default function BlogPage() {
 
   const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } =
     trpc.blog.getPublished.useInfiniteQuery(
-      { limit: 9, category: selectedCategory },
+      { limit: 12, category: selectedCategory },
       {
         getNextPageParam: (lastPage) => lastPage.nextCursor,
       }
@@ -82,6 +82,12 @@ export default function BlogPage() {
               </div>
             ) : posts.length > 0 ? (
               <>
+                {/* 記事数表示 */}
+                <div className="mb-6 text-sm text-gray-600">
+                  {posts.length}件の記事を表示中
+                  {hasNextPage && " （さらに記事があります）"}
+                </div>
+
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-8">
                   {posts.map((post: any) => (
                     <BlogCard
@@ -100,14 +106,32 @@ export default function BlogPage() {
 
                 {/* もっと読む */}
                 {hasNextPage && (
-                  <div className="text-center">
+                  <div className="text-center py-8">
                     <button
                       onClick={() => fetchNextPage()}
                       disabled={isFetchingNextPage}
-                      className="bg-white text-purple-600 border-2 border-purple-600 px-6 sm:px-8 py-2.5 sm:py-3 rounded-lg font-bold hover:bg-purple-50 transition disabled:opacity-50"
+                      className="bg-gradient-to-r from-purple-600 to-blue-600 text-white px-8 sm:px-12 py-3 sm:py-4 rounded-lg font-bold text-base sm:text-lg hover:shadow-xl hover:scale-105 transition-all disabled:opacity-50 disabled:hover:scale-100"
                     >
-                      {isFetchingNextPage ? "読み込み中..." : "もっと読む"}
+                      {isFetchingNextPage ? (
+                        <span className="flex items-center gap-2">
+                          <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
+                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none"/>
+                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"/>
+                          </svg>
+                          読み込み中...
+                        </span>
+                      ) : (
+                        <span className="flex items-center gap-2 justify-center">
+                          もっと読む
+                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                          </svg>
+                        </span>
+                      )}
                     </button>
+                    <p className="text-sm text-gray-500 mt-3">
+                      さらに記事を読み込む
+                    </p>
                   </div>
                 )}
               </>
