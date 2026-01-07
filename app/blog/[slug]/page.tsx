@@ -8,6 +8,7 @@ import Link from "next/link";
 import { BookCard } from "@/components/book/BookCard";
 import { BlogCard } from "@/components/blog/BlogCard";
 import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import Head from "next/head";
 import { useEffect } from "react";
 
@@ -346,8 +347,44 @@ export default function BlogPostPage() {
               [&>h3]:!mt-16
               [&>ul]:!mb-12
               [&>ol]:!mb-12
-              [&>p]:!mb-10">
-              <ReactMarkdown>{post.content}</ReactMarkdown>
+              [&>p]:!mb-10
+              prose-table:w-full prose-table:my-12
+              prose-th:bg-gray-100 prose-th:p-4 prose-th:text-left prose-th:font-bold prose-th:border prose-th:border-gray-300
+              prose-td:p-4 prose-td:border prose-td:border-gray-300
+              prose-tr:border-b prose-tr:border-gray-200">
+              <ReactMarkdown
+                remarkPlugins={[remarkGfm]}
+                components={{
+                  img: ({ node, alt, ...props }) => (
+                    <img
+                      alt={alt || ''}
+                      {...props}
+                      className="rounded-xl shadow-lg my-16 w-full"
+                      loading="lazy"
+                      onError={(e) => {
+                        const target = e.target as HTMLImageElement;
+                        target.style.display = 'none';
+                      }}
+                    />
+                  ),
+                  table: ({ node, ...props }) => (
+                    <div className="overflow-x-auto my-12">
+                      <table className="min-w-full divide-y divide-gray-200 border border-gray-300" {...props} />
+                    </div>
+                  ),
+                  th: ({ node, ...props }) => (
+                    <th className="bg-gray-100 px-6 py-4 text-left text-sm font-bold text-gray-900 border border-gray-300" {...props} />
+                  ),
+                  td: ({ node, ...props }) => (
+                    <td className="px-6 py-4 text-sm text-gray-700 border border-gray-300" {...props} />
+                  ),
+                  tr: ({ node, ...props }) => (
+                    <tr className="border-b border-gray-200" {...props} />
+                  ),
+                }}
+              >
+                {post.content}
+              </ReactMarkdown>
             </div>
 
             {/* タグ */}
