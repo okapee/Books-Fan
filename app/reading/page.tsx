@@ -14,6 +14,28 @@ export default function ReadingPage() {
     "want-to-read" | "reading" | "completed"
   >("reading");
 
+  const statusMap = {
+    "want-to-read": "WANT_TO_READ",
+    reading: "READING",
+    completed: "COMPLETED",
+  };
+
+  // Hooksは条件分岐の前に呼び出す
+  const { data, isLoading } = trpc.reading.getByStatus.useQuery(
+    {
+      status: statusMap[activeTab] as any,
+      limit: 20,
+    },
+    {
+      enabled: status === "authenticated", // 認証済みの時だけクエリを実行
+    }
+  );
+
+  const { data: stats } = trpc.reading.getStats.useQuery(undefined, {
+    enabled: status === "authenticated", // 認証済みの時だけクエリを実行
+  });
+
+  // 認証チェックはHooksの後
   if (status === "unauthenticated") {
     router.push("/");
     return null;
@@ -26,19 +48,6 @@ export default function ReadingPage() {
       </div>
     );
   }
-
-  const statusMap = {
-    "want-to-read": "WANT_TO_READ",
-    reading: "READING",
-    completed: "COMPLETED",
-  };
-
-  const { data, isLoading } = trpc.reading.getByStatus.useQuery({
-    status: statusMap[activeTab] as any,
-    limit: 20,
-  });
-
-  const { data: stats } = trpc.reading.getStats.useQuery();
 
   const tabs = [
     { id: "want-to-read", label: "読みたい", icon: "📚" },
