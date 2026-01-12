@@ -2,8 +2,7 @@ import type { Metadata } from "next";
 import { Inter, Merriweather } from "next/font/google";
 import "./globals.css";
 import { Providers } from "./providers";
-import { Header } from "@/components/layout/Header";
-import { Footer } from "@/components/layout/Footer";
+import { ClientLayout } from "@/components/layout/ClientLayout";
 import { PopupManager } from "@/components/modals/PopupManager";
 import { TrialExpiredBanner } from "@/components/banners/TrialExpiredBanner";
 import { generateMetadata as generateSEOMetadata } from "@/lib/seo";
@@ -58,10 +57,10 @@ export default function RootLayout({
         <Providers>
           <ServiceWorkerRegistration />
           <InstallPrompt />
-          <Header />
-          <TrialExpiredBanner />
-          <main className="flex-1">{children}</main>
-          <Footer />
+          <ClientLayout>
+            <TrialExpiredBanner />
+            <main className="flex-1">{children}</main>
+          </ClientLayout>
           <PopupManager />
         </Providers>
       </body>

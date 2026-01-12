@@ -143,7 +143,7 @@ export function MindMap({ markdown, userName = "ユーザー" }: MindMapProps) {
     }
   };
 
-  const handleShareTwitter = async () => {
+  const handleShareX = async () => {
     if (!containerRef.current) return;
 
     try {
@@ -165,15 +165,15 @@ export function MindMap({ markdown, userName = "ユーザー" }: MindMapProps) {
         const text = `${userName}の読書マインドマップ 📚\n\n#BooksFan #読書記録 #マインドマップ\n\n※ダウンロードした画像を添付してください`;
         const url = window.location.href;
 
-        const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(
+        const xUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(
           text
         )}&url=${encodeURIComponent(url)}`;
 
-        window.open(twitterUrl, "_blank", "width=600,height=400");
+        window.open(xUrl, "_blank", "width=600,height=400");
         setIsDownloading(false);
       }, 500);
     } catch (error) {
-      console.error("Failed to share on Twitter:", error);
+      console.error("Failed to share on X:", error);
       setIsDownloading(false);
       alert("共有に失敗しました");
     }
@@ -235,8 +235,8 @@ export function MindMap({ markdown, userName = "ユーザー" }: MindMapProps) {
         </button>
 
         <button
-          onClick={handleShareTwitter}
-          className="bg-[#1DA1F2] text-white px-4 py-2 rounded-lg font-semibold hover:bg-[#1a8cd8] transition flex items-center gap-2"
+          onClick={handleShareX}
+          className="bg-black text-white px-4 py-2 rounded-lg font-semibold hover:bg-gray-800 transition flex items-center gap-2"
         >
           <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
             <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />

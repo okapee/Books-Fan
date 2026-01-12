@@ -40,9 +40,15 @@
       "Bash(find:*)",
       "Bash(wait)",
       "Bash(npx pwa-asset-generator:*)",
-      "Bash(npx tsx:*)"
+      "Bash(npx tsx:*)",
+      "mcp__figma__get_screenshot",
+      "mcp__figma__get_design_context"
     ],
     "deny": [],
     "ask": []
-  }
+  },
+  "enableAllProjectMcpServers": true,
+  "enabledMcpjsonServers": [
+    "figma"
+  ]
 }

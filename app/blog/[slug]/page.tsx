@@ -229,7 +229,7 @@ export default function BlogPostPage() {
                   シェア:
                 </span>
 
-                {/* Twitter/X */}
+                {/* X */}
                 <a
                   href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(post.title)}&url=${encodeURIComponent(`${window.location.origin}/blog/${post.slug}`)}`}
                   target="_blank"
@@ -409,7 +409,7 @@ export default function BlogPostPage() {
                 この記事が役に立ったら、シェアしていただけると嬉しいです！
               </p>
               <div className="flex flex-wrap items-center gap-2 sm:gap-3">
-                {/* Twitter/X */}
+                {/* X */}
                 <a
                   href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(post.title)}&url=${encodeURIComponent(`${window.location.origin}/blog/${post.slug}`)}`}
                   target="_blank"

@@ -1,0 +1,18 @@
+# robots.txt for Books Fan
+
+User-agent: *
+Allow: /
+
+# Disallow admin and private pages
+Disallow: /admin/
+Disallow: /api/
+Disallow: /settings/
+Disallow: /dashboard/
+Disallow: /profile/edit
+
+# Disallow manifest and technical files
+Disallow: /manifest.json
+Disallow: /*.json$
+
+# Sitemap
+Sitemap: https://books-fan.com/sitemap.xml
