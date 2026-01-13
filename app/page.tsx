@@ -10,6 +10,7 @@ export default function Home() {
   const router = useRouter();
   const [currentSlide, setCurrentSlide] = useState(0);
   const [showLoginModal, setShowLoginModal] = useState(false);
+  const [showMobileMenu, setShowMobileMenu] = useState(false);
 
   // Auto-advance carousel
   useEffect(() => {
@@ -107,23 +108,88 @@ export default function Home() {
             </nav>
 
             {/* Mobile Menu Button */}
-            <button className="lg:hidden p-2 text-gray-600 hover:text-gray-900">
+            <button
+              onClick={() => setShowMobileMenu(!showMobileMenu)}
+              className="lg:hidden p-2 text-gray-600 hover:text-gray-900"
+              aria-label="メニュー"
+            >
               <svg
                 className="w-6 h-6"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M4 6h16M4 12h16M4 18h16"
-                />
+                {showMobileMenu ? (
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                ) : (
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M4 6h16M4 12h16M4 18h16"
+                  />
+                )}
               </svg>
             </button>
           </div>
         </div>
+
+        {/* Mobile Menu */}
+        {showMobileMenu && (
+          <div className="lg:hidden border-t border-gray-200 bg-white">
+            <nav className="container mx-auto px-4 py-4 space-y-1">
+              <Link
+                href="#features"
+                onClick={() => setShowMobileMenu(false)}
+                className="block px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg transition"
+              >
+                機能
+              </Link>
+              <Link
+                href="#all-features"
+                onClick={() => setShowMobileMenu(false)}
+                className="block px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg transition"
+              >
+                充実の機能
+              </Link>
+              <Link
+                href="#testimonials"
+                onClick={() => setShowMobileMenu(false)}
+                className="block px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg transition"
+              >
+                読者の声
+              </Link>
+              <Link
+                href="/books"
+                onClick={() => setShowMobileMenu(false)}
+                className="block px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg transition"
+              >
+                📚 本を探す
+              </Link>
+              <Link
+                href="/blog"
+                onClick={() => setShowMobileMenu(false)}
+                className="block px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg transition"
+              >
+                📝 ブログ
+              </Link>
+              <button
+                onClick={() => {
+                  setShowMobileMenu(false);
+                  setShowLoginModal(true);
+                }}
+                className="w-full text-left px-4 py-3 text-blue-600 font-semibold hover:bg-blue-50 rounded-lg transition"
+              >
+                🔐 ログイン / 無料で始める
+              </button>
+            </nav>
+          </div>
+        )}
       </header>
 
       {/* Login Modal */}
@@ -208,19 +274,19 @@ export default function Home() {
         <div className="absolute bottom-20 left-1/3 w-80 h-80 bg-pink-300/20 rounded-full blur-3xl animate-blob animation-delay-4000"></div>
 
         <div className="container mx-auto px-4 relative z-10">
-          <div className="text-center max-w-5xl mx-auto">
-            <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold mb-8 leading-tight">
+          <div className="text-center max-w-7xl mx-auto">
+            <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold mb-8 leading-tight" style={{ wordBreak: 'keep-all' }}>
               <span className="block text-gray-900 animate-fadeIn">
                 本への愛を
               </span>
               <span className="block bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent animate-gradient animate-fadeIn animation-delay-200">
-                もっと深く、もっと広く。
+                <span className="xl:whitespace-nowrap">もっと深く、もっと広く。</span>
               </span>
             </h1>
-            <p className="text-lg md:text-xl text-gray-600 mb-12 leading-relaxed max-w-3xl mx-auto animate-fadeIn animation-delay-400">
-              Books Fan は、本との出会いのすべてを一人ひとりのプラットフォーム。
+            <p className="text-lg md:text-xl text-gray-600 mb-12 leading-relaxed max-w-3xl mx-auto animate-fadeIn animation-delay-400" style={{ wordBreak: 'keep-all' }}>
+              <span className="whitespace-nowrap">Books Fan は、</span><span className="whitespace-nowrap">本との出会いの</span><span className="whitespace-nowrap">すべてを</span><span className="whitespace-nowrap">一人ひとりの</span>プラットフォーム。
               <br />
-              わたなりの読書体験を記録し、新しい本との出会いをサポートします。
+              <span className="whitespace-nowrap">わたなりの</span><span className="whitespace-nowrap">読書体験を記録し、</span><span className="whitespace-nowrap">新しい本との</span><span className="whitespace-nowrap">出会いを</span>サポートします。
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center animate-fadeIn animation-delay-600">
               <button
@@ -275,43 +341,49 @@ export default function Home() {
                       title: "7つの習慣",
                       author: "スティーブン・R・コヴィー",
                       rating: 4.9,
+                      asin: "4906638015",
                       image:
-                        "https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=300&h=450&fit=crop",
+                        "https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=400&h=600&fit=crop",
                     },
                     {
                       title: "サピエンス全史",
                       author: "ユヴァル・ノア・ハラリ",
                       rating: 4.7,
+                      asin: "430922671X",
                       image:
-                        "https://images.unsplash.com/photo-1512820790803-83ca734da794?w=300&h=450&fit=crop",
+                        "https://images.unsplash.com/photo-1589829085413-56de8ae18c73?w=400&h=600&fit=crop",
                     },
                     {
                       title: "嫌われる勇気",
                       author: "岸見一郎・古賀史健",
                       rating: 4.6,
+                      asin: "4478025819",
                       image:
-                        "https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?w=300&h=450&fit=crop",
+                        "https://images.unsplash.com/photo-1512820790803-83ca734da794?w=400&h=600&fit=crop",
                     },
                     {
                       title: "FACTFULNESS",
                       author: "ハンス・ロスリング",
                       rating: 4.8,
+                      asin: "4822289605",
                       image:
-                        "https://images.unsplash.com/photo-1543002588-bfa74002ed7e?w=300&h=450&fit=crop",
+                        "https://images.unsplash.com/photo-1495446815901-a7297e633e8d?w=400&h=600&fit=crop",
                     },
                     {
                       title: "思考の整理学",
                       author: "外山滋比古",
                       rating: 4.5,
+                      asin: "4480020470",
                       image:
-                        "https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=300&h=450&fit=crop",
+                        "https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?w=400&h=600&fit=crop",
                     },
                     {
                       title: "人を動かす",
                       author: "デール・カーネギー",
                       rating: 4.8,
+                      asin: "442210098X",
                       image:
-                        "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=300&h=450&fit=crop",
+                        "https://images.unsplash.com/photo-1521714161819-15534968fc5f?w=400&h=600&fit=crop",
                     },
                   ],
                   [
@@ -319,50 +391,62 @@ export default function Home() {
                       title: "7つの習慣",
                       author: "スティーブン・R・コヴィー",
                       rating: 4.9,
+                      asin: "4906638015",
                       image:
-                        "https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=300&h=450&fit=crop",
+                        "https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=400&h=600&fit=crop",
                     },
                     {
                       title: "サピエンス全史",
                       author: "ユヴァル・ノア・ハラリ",
                       rating: 4.7,
+                      asin: "430922671X",
                       image:
-                        "https://images.unsplash.com/photo-1512820790803-83ca734da794?w=300&h=450&fit=crop",
+                        "https://images.unsplash.com/photo-1589829085413-56de8ae18c73?w=400&h=600&fit=crop",
                     },
                     {
                       title: "嫌われる勇気",
                       author: "岸見一郎・古賀史健",
                       rating: 4.6,
+                      asin: "4478025819",
                       image:
-                        "https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?w=300&h=450&fit=crop",
+                        "https://images.unsplash.com/photo-1512820790803-83ca734da794?w=400&h=600&fit=crop",
                     },
                     {
                       title: "FACTFULNESS",
                       author: "ハンス・ロスリング",
                       rating: 4.8,
+                      asin: "4822289605",
                       image:
-                        "https://images.unsplash.com/photo-1543002588-bfa74002ed7e?w=300&h=450&fit=crop",
+                        "https://images.unsplash.com/photo-1495446815901-a7297e633e8d?w=400&h=600&fit=crop",
                     },
                     {
                       title: "思考の整理学",
                       author: "外山滋比古",
                       rating: 4.5,
+                      asin: "4480020470",
                       image:
-                        "https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=300&h=450&fit=crop",
+                        "https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?w=400&h=600&fit=crop",
                     },
                     {
                       title: "人を動かす",
                       author: "デール・カーネギー",
                       rating: 4.8,
+                      asin: "442210098X",
                       image:
-                        "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=300&h=450&fit=crop",
+                        "https://images.unsplash.com/photo-1521714161819-15534968fc5f?w=400&h=600&fit=crop",
                     },
                   ],
                 ].map((slide, slideIndex) => (
                   <div key={slideIndex} className="min-w-full">
                     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6 px-4">
                       {slide.map((book, index) => (
-                        <div key={index} className="group cursor-pointer">
+                        <a
+                          key={index}
+                          href={`https://www.amazon.co.jp/dp/${book.asin}?tag=okazaki060804-22`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="group cursor-pointer block"
+                        >
                           <div className="relative aspect-[2/3] rounded-lg overflow-hidden mb-3 bg-gradient-to-br from-gray-200 to-gray-300 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2">
                             <img
                               src={book.image}
@@ -388,7 +472,7 @@ export default function Home() {
                               {book.rating}
                             </span>
                           </div>
-                        </div>
+                        </a>
                       ))}
                     </div>
                   </div>
@@ -948,12 +1032,14 @@ export default function Home() {
               </p>
               {/* Social Links */}
               <div className="flex gap-3">
-                <a
-                  href="https://twitter.com/booksfan"
-                  target="_blank"
-                  rel="noopener noreferrer"
+                <button
+                  onClick={() => {
+                    const url = 'https://books-fan.com';
+                    const text = 'Books Fan - あなたの読書体験をもっと豊かに';
+                    window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`, '_blank', 'width=550,height=420');
+                  }}
                   className="w-10 h-10 bg-gray-800 hover:bg-black rounded-full flex items-center justify-center transition-colors"
-                  aria-label="X (Twitter)"
+                  aria-label="Xでシェア"
                 >
                   <svg
                     className="w-5 h-5"
@@ -962,13 +1048,14 @@ export default function Home() {
                   >
                     <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
                   </svg>
-                </a>
-                <a
-                  href="https://www.facebook.com/booksfan"
-                  target="_blank"
-                  rel="noopener noreferrer"
+                </button>
+                <button
+                  onClick={() => {
+                    const url = 'https://books-fan.com';
+                    window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`, '_blank', 'width=550,height=420');
+                  }}
                   className="w-10 h-10 bg-gray-800 hover:bg-[#1877F2] rounded-full flex items-center justify-center transition-colors"
-                  aria-label="Facebook"
+                  aria-label="Facebookでシェア"
                 >
                   <svg
                     className="w-5 h-5"
@@ -977,13 +1064,14 @@ export default function Home() {
                   >
                     <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
                   </svg>
-                </a>
-                <a
-                  href="https://line.me/R/ti/p/@booksfan"
-                  target="_blank"
-                  rel="noopener noreferrer"
+                </button>
+                <button
+                  onClick={() => {
+                    const url = 'https://books-fan.com';
+                    window.open(`https://social-plugins.line.me/lineit/share?url=${encodeURIComponent(url)}`, '_blank', 'width=550,height=420');
+                  }}
                   className="w-10 h-10 bg-gray-800 hover:bg-[#06C755] rounded-full flex items-center justify-center transition-colors"
-                  aria-label="LINE"
+                  aria-label="LINEでシェア"
                 >
                   <svg
                     className="w-5 h-5"
@@ -992,7 +1080,7 @@ export default function Home() {
                   >
                     <path d="M19.365 9.863c.349 0 .63.285.63.631 0 .345-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .344-.281.629-.63.629h-2.386c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63h2.386c.346 0 .627.285.627.63 0 .349-.281.63-.63.63H17.61v1.125h1.755zm-3.855 3.016c0 .27-.174.51-.432.596-.064.021-.133.031-.199.031-.211 0-.391-.09-.51-.25l-2.443-3.317v2.94c0 .344-.279.629-.631.629-.346 0-.626-.285-.626-.629V8.108c0-.27.173-.51.43-.595.06-.023.136-.033.194-.033.195 0 .375.105.495.254l2.462 3.33V8.108c0-.345.282-.63.63-.63.345 0 .63.285.63.63v4.771zm-5.741 0c0 .344-.282.629-.631.629-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63.346 0 .628.285.628.63v4.771zm-2.466.629H4.917c-.345 0-.63-.285-.63-.629V8.108c0-.345.285-.63.63-.63.348 0 .63.285.63.63v4.141h1.756c.348 0 .629.283.629.63 0 .344-.282.629-.629.629M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314" />
                   </svg>
-                </a>
+                </button>
               </div>
             </div>
 
