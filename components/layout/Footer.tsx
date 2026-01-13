@@ -71,12 +71,12 @@ export function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/features" className="hover:text-white transition-colors">
+                <Link href="/#all-features" className="hover:text-white transition-colors">
                   AI要約
                 </Link>
               </li>
               <li>
-                <Link href="/features" className="hover:text-white transition-colors">
+                <Link href="/#all-features" className="hover:text-white transition-colors">
                   マインドマップ
                 </Link>
               </li>
@@ -90,11 +90,6 @@ export function Footer() {
               <li>
                 <Link href="/about" className="hover:text-white transition-colors">
                   運営会社
-                </Link>
-              </li>
-              <li>
-                <Link href="/careers" className="hover:text-white transition-colors">
-                  採用情報
                 </Link>
               </li>
               <li>
@@ -120,18 +115,8 @@ export function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/legal" className="hover:text-white transition-colors">
-                  特定商取引法
-                </Link>
-              </li>
-              <li>
                 <Link href="/help" className="hover:text-white transition-colors">
                   ヘルプセンター
-                </Link>
-              </li>
-              <li>
-                <Link href="/faq" className="hover:text-white transition-colors">
-                  よくある質問
                 </Link>
               </li>
             </ul>

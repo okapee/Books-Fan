@@ -275,20 +275,23 @@ export default function Home() {
 
         <div className="container mx-auto px-4 relative z-10">
           <div className="text-center max-w-7xl mx-auto">
-            <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold mb-8 leading-tight" style={{ wordBreak: 'keep-all' }}>
-              <span className="block text-gray-900 animate-fadeIn">
+            <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold mb-8 leading-tight text-left inline-block" style={{ wordBreak: 'keep-all' }}>
+              <span className="block text-gray-900 animate-fadeIn-slow mb-3">
                 本への愛を
               </span>
-              <span className="block bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent animate-gradient animate-fadeIn animation-delay-200">
-                <span className="xl:whitespace-nowrap">もっと深く、もっと広く。</span>
+              <span className="block md:inline bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent animate-gradient animate-fadeIn-slow animation-delay-1000 mb-3 xl:whitespace-nowrap">
+                もっと深く、
+              </span>
+              <span className="block md:inline bg-gradient-to-r from-purple-600 via-pink-600 to-rose-600 bg-clip-text text-transparent animate-gradient animate-fadeIn-slow animation-delay-1500 xl:whitespace-nowrap">
+                もっと広く。
               </span>
             </h1>
-            <p className="text-base md:text-xl text-gray-600 mb-12 leading-relaxed max-w-2xl mx-auto px-6 animate-fadeIn animation-delay-400">
+            <p className="text-base md:text-xl text-gray-600 mb-12 leading-relaxed max-w-2xl mx-auto px-6">
               あなただけの読書プラットフォーム。
               <br />
               本との出会いを記録し、新しい発見をお届けします。
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center animate-fadeIn animation-delay-600">
+            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
               <button
                 onClick={() => setShowLoginModal(true)}
                 className="bg-blue-600 text-white px-10 py-4 rounded-xl font-semibold hover:bg-blue-700 transition-all shadow-xl hover:shadow-2xl hover:-translate-y-2 hover:scale-105 duration-300"
@@ -888,7 +891,7 @@ export default function Home() {
                 name: "佐藤愛美",
                 role: "読書家",
                 avatar:
-                  "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop",
+                  "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=100&h=100&fit=crop&crop=faces",
                 comment:
                   "以前は読んだ本の内容を忘れてしまうことが多かったのですが、Books Fanで記録を始めてから、本から得た知識が確実に自分のものになっていると実感しています。検索機能も優秀で、必要な情報がすぐに見つかります。",
               },
@@ -898,13 +901,13 @@ export default function Home() {
                 comment:
                   "忙しい毎日の中で、効率的に読書をしたいと思っていました。ポモドーロタイマーとAI要約機能のおかげで、限られた時間でも質の高い読書体験ができています。マインドマップ機能も素晴らしいです！",
                 avatar:
-                  "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop",
+                  "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop&crop=faces",
               },
               {
                 name: "山田花子",
                 role: "大学生",
                 avatar:
-                  "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop",
+                  "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&h=100&fit=crop&crop=faces",
                 comment:
                   "同じ本を読んでいる友達とつながれるのが嬉しいです。感想を共有したり、おすすめの本を教え合ったり、読書がより楽しくなりました。パーソナル推薦機能で、自分では選ばなかったジャンルの本にも出会えます。",
               },
