@@ -4,9 +4,9 @@ import Link from "next/link";
 
 export function Footer() {
   return (
-    <footer className="bg-gray-900 text-white py-16">
+    <footer className="bg-gray-900 text-white py-12 md:py-14">
       <div className="container mx-auto px-4">
-        <div className="grid md:grid-cols-4 gap-12 mb-12">
+        <div className="grid md:grid-cols-4 gap-8 md:gap-12 mb-8 md:mb-10">
           {/* Brand */}
           <div>
             <h3 className="text-2xl font-bold mb-3">Books Fan</h3>
@@ -139,7 +139,7 @@ export function Footer() {
         </div>
 
         {/* Bottom */}
-        <div className="border-t border-gray-800 pt-8 text-center">
+        <div className="border-t border-gray-800 pt-6 md:pt-8 text-center">
           <p className="text-sm text-gray-400">
             © 2026 Books Fan. All rights reserved.
           </p>
