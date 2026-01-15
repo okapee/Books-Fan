@@ -678,7 +678,7 @@ export default function Home() {
 
             <div className="text-center mt-12">
               <Link
-                href="/features"
+                href="/upgrade"
                 className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 font-medium group"
               >
                 すべての機能を確認する
@@ -1109,7 +1109,7 @@ export default function Home() {
                 </li>
                 <li>
                   <Link
-                    href="/features"
+                    href="/upgrade"
                     className="hover:text-white transition-colors"
                   >
                     AI要約
@@ -1117,7 +1117,7 @@ export default function Home() {
                 </li>
                 <li>
                   <Link
-                    href="/features"
+                    href="/upgrade"
                     className="hover:text-white transition-colors"
                   >
                     マインドマップ
@@ -1136,14 +1136,6 @@ export default function Home() {
                     className="hover:text-white transition-colors"
                   >
                     運営会社
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/careers"
-                    className="hover:text-white transition-colors"
-                  >
-                    採用情報
                   </Link>
                 </li>
                 <li>
@@ -1179,26 +1171,10 @@ export default function Home() {
                 </li>
                 <li>
                   <Link
-                    href="/legal"
-                    className="hover:text-white transition-colors"
-                  >
-                    特定商取引法
-                  </Link>
-                </li>
-                <li>
-                  <Link
                     href="/help"
                     className="hover:text-white transition-colors"
                   >
                     ヘルプセンター
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/faq"
-                    className="hover:text-white transition-colors"
-                  >
-                    よくある質問
                   </Link>
                 </li>
               </ul>
