@@ -521,6 +521,14 @@ model BlogPostBook {
   @@index([bookId])
 }
 
+// システム設定（OAuth トークンなど）
+model SystemSetting {
+  key       String   @id
+  value     String   @db.Text
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
 // SNS投稿履歴
 model SNSPost {
   id           String    @id @default(cuid())
