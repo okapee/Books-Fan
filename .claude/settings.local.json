@@ -42,7 +42,9 @@
       "Bash(npx pwa-asset-generator:*)",
       "Bash(npx tsx:*)",
       "mcp__figma__get_screenshot",
-      "mcp__figma__get_design_context"
+      "mcp__figma__get_design_context",
+      "Bash(tree:*)",
+      "Bash(npx tsc:*)"
     ],
     "deny": [],
     "ask": []

@@ -39,6 +39,7 @@
     "remark-gfm": "^4.0.1",
     "stripe": "^17.7.0",
     "superjson": "^2.2.2",
+    "twitter-api-v2": "^1.29.0",
     "zod": "^3.24.1"
   },
   "devDependencies": {

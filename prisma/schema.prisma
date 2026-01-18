@@ -189,6 +189,9 @@ model Book {
   // ブログ
   blogPostBooks   BlogPostBook[]
 
+  // SNS投稿
+  snsPosts        SNSPost[]
+
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
@@ -219,6 +222,7 @@ model Review {
   aiSummary  AISummary?
   likes      ReviewLike[]
   comments   ReviewComment[]
+  snsPosts   SNSPost[]
 
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
@@ -515,4 +519,28 @@ model BlogPostBook {
   @@unique([blogPostId, bookId])
   @@index([blogPostId])
   @@index([bookId])
+}
+
+// SNS投稿履歴
+model SNSPost {
+  id           String    @id @default(cuid())
+  platform     String    // "X"
+  externalId   String?   // SNSでの投稿ID
+  bookId       String
+  reviewId     String?
+  content      String    @db.Text
+  status       String    @default("PENDING") // PENDING, POSTED, FAILED
+  postedAt     DateTime?
+  errorMessage String?
+
+  book         Book      @relation(fields: [bookId], references: [id], onDelete: Cascade)
+  review       Review?   @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  @@index([platform])
+  @@index([bookId])
+  @@index([status])
+  @@index([createdAt])
 }
