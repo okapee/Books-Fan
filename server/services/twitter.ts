@@ -52,12 +52,35 @@ export async function postTweet(text: string): Promise<{
       success: true,
       tweetId: result.data.id,
     };
-  } catch (error) {
+  } catch (error: unknown) {
     console.error("Failed to post tweet:", error);
 
     let errorMessage = "Unknown error";
-    if (error instanceof Error) {
-      errorMessage = error.message;
+
+    // twitter-api-v2 のエラー詳細を取得
+    if (error && typeof error === "object") {
+      const err = error as Record<string, unknown>;
+
+      // APIエラーの詳細を取得
+      if (err.data && typeof err.data === "object") {
+        const data = err.data as Record<string, unknown>;
+        console.error("X API Error details:", JSON.stringify(data, null, 2));
+
+        if (data.detail) {
+          errorMessage = String(data.detail);
+        } else if (data.title) {
+          errorMessage = String(data.title);
+        }
+      }
+
+      if (err.message) {
+        errorMessage = String(err.message);
+      }
+
+      // エラーコードも記録
+      if (err.code) {
+        errorMessage += ` (code: ${err.code})`;
+      }
     }
 
     return {
