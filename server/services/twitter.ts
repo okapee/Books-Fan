@@ -104,7 +104,7 @@ async function getTwitterClient(): Promise<TwitterApi | null> {
       appSecret: apiSecret,
       accessToken: accessToken,
       accessSecret: accessTokenSecret,
-    });
+    }).readWrite;
   }
 
   console.error("No valid X API credentials found");

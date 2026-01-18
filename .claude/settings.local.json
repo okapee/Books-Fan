@@ -44,7 +44,14 @@
       "mcp__figma__get_screenshot",
       "mcp__figma__get_design_context",
       "Bash(tree:*)",
-      "Bash(npx tsc:*)"
+      "Bash(npx tsc:*)",
+      "WebFetch(domain:unikoukokun.jp)",
+      "WebSearch",
+      "WebFetch(domain:hazaveh.net)",
+      "WebFetch(domain:working-student.com)",
+      "WebFetch(domain:qiita.com)",
+      "WebFetch(domain:programming-zero.net)",
+      "Bash(npx ts-node:*)"
     ],
     "deny": [],
     "ask": []
