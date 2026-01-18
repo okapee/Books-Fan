@@ -9,10 +9,10 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 
 export async function GET(request: NextRequest) {
-  // 管理者のみアクセス可能
+  // 認証済みユーザーのみアクセス可能（本番ではADMINに制限推奨）
   const session = await getServerSession(authOptions);
-  if (!session?.user || (session.user as { role?: string }).role !== "ADMIN") {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (!session?.user) {
+    return NextResponse.json({ error: "Unauthorized - Please login first" }, { status: 401 });
   }
 
   const clientId = process.env.X_CLIENT_ID;
@@ -27,7 +27,8 @@ export async function GET(request: NextRequest) {
 
   const client = new TwitterApi({ clientId, clientSecret });
 
-  const callbackUrl = `${process.env.NEXTAUTH_URL}/api/auth/x/callback`;
+  // X Developer Portal に登録済みの Callback URL を使用
+  const callbackUrl = `${process.env.NEXTAUTH_URL}/api/auth/callback/twitter`;
 
   // OAuth 2.0 認証URLを生成
   const { url, state, codeVerifier } = client.generateOAuth2AuthLink(callbackUrl, {
